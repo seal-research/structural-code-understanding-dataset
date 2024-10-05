@@ -1,4 +1,4 @@
-def partition(array:List, left:int, right:int) -> int:
+def partition(array:list, left:int, right:int) -> int:
     pivot = array[left]
     low = left + 1
     high = right
@@ -15,14 +15,14 @@ def partition(array:List, left:int, right:int) -> int:
     return high
 
 
-def quick_help(array:List, left:int, right:int) -> None:
+def quick_help(array:list, left:int, right:int) -> None:
     if left < right:
         piv = partition(array, left, right)
         quick_help(array, left, piv-1)
         quick_help(array, piv+1, right)
 
 
-def quick_sort(array:List) -> List:
+def quick_sort(array:list) -> list:
     copied = array[:]
     quick_help(copied, 0, len(array)-1)
     return copied

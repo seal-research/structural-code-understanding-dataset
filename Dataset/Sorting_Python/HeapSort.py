@@ -1,4 +1,4 @@
-def min_heapify(array:List, root:int, last:int) -> None:
+def min_heapify(array:list, root:int, last:int) -> None:
     smallest = root
     left_child = (2 * root) + 1
     right_child = (2 * root) + 2
@@ -13,7 +13,7 @@ def min_heapify(array:List, root:int, last:int) -> None:
         min_heapify(array, smallest, last)
 
 
-def min_heap_sort(array:List) -> List:
+def min_heap_sort(array:list) -> list:
     copied = array[:]
     size = len(copied)
     

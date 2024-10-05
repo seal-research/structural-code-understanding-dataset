@@ -1,4 +1,4 @@
-def merge(array:List, start:int, mid:int, last:int) -> None:
+def merge(array:list, start:int, mid:int, last:int) -> None:
     k = start
 
     sub1, sub2 = array[start:mid+1], array[mid+1:last+1]
@@ -19,7 +19,7 @@ def merge(array:List, start:int, mid:int, last:int) -> None:
         array[k:last+1] = sub1[i:]
 
 
-def merge_help(array:List, start:int, last:int) -> None:
+def merge_help(array:list, start:int, last:int) -> None:
     if start == last:
         return
     else:
@@ -29,7 +29,7 @@ def merge_help(array:List, start:int, last:int) -> None:
         merge(array, start, mid, last)
 
 
-def merge_sort(array:List) -> List:
+def merge_sort(array:list) -> list:
     copied = array[:]
     merge_help(copied, 0, len(array)-1)
     return copied

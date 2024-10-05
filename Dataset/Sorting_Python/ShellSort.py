@@ -1,10 +1,10 @@
-def shell_insert(array:List, last:int, gap:int) -> None:
+def shell_insert(array:list, last:int, gap:int) -> None:
     for i in range(last, 0, -gap):
         if array[i-gap] > array[i]:
             array[i-gap], array[i] = array[i], array[i-gap]
 
 
-def shell_sort(array:List) -> List:
+def shell_sort(array:list) -> list:
     copied = array[:]
     gap = len(copied) // 2
     i = 0

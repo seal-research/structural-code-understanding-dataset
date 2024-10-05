@@ -1,4 +1,4 @@
-def smallest(array:List, start:int) -> int:
+def smallest(array:list, start:int) -> int:
     smallest = start
     for i in range(start, len(array)):
         if array[smallest] > array[i]:
@@ -6,7 +6,7 @@ def smallest(array:List, start:int) -> int:
     return smallest
 
 
-def selection_sort(array:List) -> List:
+def selection_sort(array:list) -> list:
     copied = array[:]
     for i in range(len(copied)):
         small_idx = smallest(copied, i)
