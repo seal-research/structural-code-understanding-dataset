@@ -1,0 +1,49 @@
+2024-10-05 22:47:01,676 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [5, 3, 1, 8, 6], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1,, Matched: False
+2024-10-05 22:48:26,076 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [5, 3, 1, 8, 6], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, Matched: False
+2024-10-05 22:48:49,629 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [5, 3, 1, 8, 6], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3,, Matched: False
+2024-10-05 22:52:19,818 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [5, 3, 1, 8, 6], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 12], Matched: False
+2024-10-05 23:01:53,925 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [5, 3, 1, 8, 6], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 12], Matched: False
+2024-10-05 23:02:24,456 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [5, 3, 1, 8, 6], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 12], Matched: False
+2024-10-05 23:47:29,290 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [5, 3, 1, 8, 6], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 11, 1, 2, 3, 4, 5, 11, 1, 2, 3, 4, 5, 11, 1, 2, 3, 4, 5, 12], Matched: False
+2024-10-05 23:47:57,962 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [5, 3, 1, 8, 6], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 12], Matched: False
+2024-10-05 23:55:50,237 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [1, 2, 3], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 11, 1, 2, 3, 4, 5, 11, 1, 2, 3, 4, 5, 12], Matched: False
+2024-10-06 00:15:19,414 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-central1/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 400 Bad Request"
+2024-10-06 00:24:00,161 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-central1/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 400 Bad Request"
+2024-10-06 00:24:43,147 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-06 00:24:43,173 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_014aJAqufX7mP3ADTwXwK75J",
+  "content": [
+    {
+      "text": "[9,10,11,2,3,4,10,11,2,3,4,10,11,2,3,4,10,12]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 415,
+    "output_tokens": 40
+  }
+}, Matched: False
+2024-10-06 00:34:21,737 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-06 00:34:21,738 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01YNkZATSu8B7ngM2S8TVZo9",
+  "content": [
+    {
+      "text": "Let's walk through the execution step-by-step:\n\n1. Start with bubble_sort function:\n   [8]\n\n2. Execute line 9:\n   [8, 9] (copied = [1, 2, 3])\n\n3. Enter the for loop at line 10:\n   [8, 9, 10] (i = 0)\n\n4. Call bubble function at line 11:\n   [8, 9, 10, 11, 1]\n\n5. Inside bubble function:\n   [8, 9, 10, 11, 1, 2] (last = 3)\n   [8, 9, 10, 11, 1, 2, 3] (enter for loop, i = 0)\n   [8, 9, 10, 11, 1, 2, 3, 4] (1 <= 2, condition false)\n   [8, 9, 10, 11, 1, 2, 3] (i = 1)\n   [8, 9, 10, 11, 1, 2, 3, 4] (2 <= 3, condition false)\n   [8, 9, 10, 11, 1, 2, 3] (loop ends)\n\n6. Return to bubble_sort:\n   [8, 9, 10] (i = 1)\n   [8, 9, 10, 11, 1, 2, 3, 4] (bubble called again)\n   [8, 9, 10] (i = 2)\n   [8, 9, 10, 11, 1, 2] (bubble called last time)\n\n7. Exit for loop, return result:\n   [8, 9, 10, 12]\n\nFinal list of executed line numbers:\n[8, 9, 10, 11, 1, 2, 3, 4, 3, 4, 10, 11, 1, 2, 3, 4, 10, 11, 1, 2, 10, 12]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 434,
+    "output_tokens": 508
+  }
+}, Matched: False

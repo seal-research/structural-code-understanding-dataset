@@ -90,7 +90,19 @@ def is_recursive(function_name: str):
 
     return visitor.is_recursive
 
+def format_source_code_with_line_numbers(source_code: str) -> str:
+    lines = source_code.splitlines()
+    numbered_code = "\n".join(f"{line}  # {i + 1}" for i, line in enumerate(lines))
+    return numbered_code
 
+def read_and_format_file_with_line_numbers(filepath: str) -> str:
+    with open(filepath, 'r') as file:
+        source_code = file.read()
+    return format_source_code_with_line_numbers(source_code)
+
+def get_function_source_code(func):
+    source_file = inspect.getsourcefile(func)
+    return read_and_format_file_with_line_numbers(source_file)
 
 # Now, when you use the is_recursive function, it should correctly check if the function is recursive.
 
@@ -123,28 +135,33 @@ def run_function_and_trace(function_name: str, *args):
     return line_numbers  # Return the list without sorting
 
 # Test input
-test_input = [9, 7, 5, 3, 1, 8, 6, 4, 2, 0]
-test_input_length = len(test_input)
+test_inputs = [[1,2,3],[5, 3, 1, 8, 6], [9, 7, 5, 3, 1, 8, 6, 4, 2, 0]]
 
 # Create an empty dataframe to store the results
 df_results = pd.DataFrame(columns=['Algorithm', 'Test Case', 'List Length', 'Executed Lines', 'Is Recursive'])
 
 # Run the test for each sorting algorithm
-for algorithm in sorting_algorithms:
-    line_numbers = run_function_and_trace(algorithm, test_input)
-    recursive_flag = is_recursive(algorithm)  # Check if the function is recursive
-    
-    # Create a new dataframe for each row
-    new_row = pd.DataFrame({
-        'Algorithm': [algorithm],
-        'Test Case': [test_input],           # Save the test case (the list)
-        'List Length': [test_input_length],  # Save the length of the list
-        'Executed Lines': [line_numbers],    # Save the executed lines
-        'Is Recursive': [recursive_flag]     # Save whether the function is recursive
-    })
-    
-    # Concatenate the new row to the existing dataframe
-    df_results = pd.concat([df_results, new_row], ignore_index=True)
+for test_input in test_inputs:
+    for algorithm in sorting_algorithms:
+        func = globals().get(algorithm)
+        line_numbers = run_function_and_trace(algorithm, test_input)
+        recursive_flag = is_recursive(algorithm)  # Check if the function is recursive
+
+        # Get the source code and format it with line numbers
+        formatted_code = get_function_source_code(func)
+        
+        # Create a new dataframe for each row
+        new_row = pd.DataFrame({
+            'Algorithm': [algorithm],
+            'Test Case': [test_input],           # Save the test case (the list)
+            'List Length': len(test_input),  # Save the length of the list
+            'Executed Lines': [line_numbers],    # Save the executed lines
+            'Is Recursive': [recursive_flag],     # Save whether the function is recursive
+            'Source Code': [formatted_code]
+        })
+        
+        # Concatenate the new row to the existing dataframe
+        df_results = pd.concat([df_results, new_row], ignore_index=True)
 
 # Display the dataframe with results
 print(df_results)

@@ -10,6 +10,3 @@ def bubble_sort(array:list) -> list:
     for i in range(len(copied)):
         bubble(copied, i)
     return copied
-
-if __name__ == '__main__':
-    bubble_sort([5,4,6,6,4,2,4,5,3,2,3,4,3,2,1,6])
