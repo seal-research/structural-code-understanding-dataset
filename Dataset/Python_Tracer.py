@@ -12,9 +12,11 @@ from Sorting_Python.MergeSort import *
 from Sorting_Python.QuickSort import *
 from Sorting_Python.SelectionSort import *
 from Sorting_Python.ShellSort import *
+from Sorting_Python.Claude_BubbleSort import *
 
 # List of sorting algorithms
 sorting_algorithms = [
+    'claude_bubble_sort',
     'bubble_sort',
     'min_heap_sort',
     'insertion_sort',

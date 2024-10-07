@@ -47,3 +47,236 @@
     "output_tokens": 508
   }
 }, Matched: False
+2024-10-07 09:19:17,234 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [1, 2, 3], Output:  [8, 9, 10, 11, 1, 2, 3, 4, 5, 11, 1, 2, 3, 4, 5, 11, 1, 2, 3, 4, 5, 12], Matched: False
+2024-10-07 09:20:41,895 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [1, 2, 3], Output:  ```python
+def bubble_sort(nums):
+    #0
+    n = len(nums)
+    #1
+    for i in range(n):
+        #2
+        for j in range(0, n - i - 1):
+            #3
+            if nums[j] > nums[j + 1]:
+                #4
+                nums[j], nums[j + 1] = nums[j + 1], nums[j]
+                #5
+    #6
+    return nums
+#7
+
+bubble_sort([1, 2, 3])
+```
+
+[2, 3, 4, 5], Matched: False
+2024-10-07 09:38:43,089 - WARNING - Compute Engine Metadata server unavailable on attempt 1 of 3. Reason: [WinError 10051] Ein Socketvorgang bezog sich auf ein nicht verfügbares Netzwerk
+2024-10-07 09:38:44,111 - WARNING - Compute Engine Metadata server unavailable on attempt 2 of 3. Reason: [WinError 10051] Ein Socketvorgang bezog sich auf ein nicht verfügbares Netzwerk
+2024-10-07 09:38:45,997 - WARNING - Compute Engine Metadata server unavailable on attempt 3 of 3. Reason: [WinError 10051] Ein Socketvorgang bezog sich auf ein nicht verfügbares Netzwerk
+2024-10-07 09:38:45,997 - WARNING - Authentication failed using Compute Engine authentication due to unavailable metadata server.
+2024-10-07 09:44:53,428 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 09:44:53,443 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01A574xB8QX7pUVrzEZieQNi",
+  "content": [
+    {
+      "text": "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 3, 4, 15]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 251,
+    "output_tokens": 90
+  }
+}, Matched: False
+2024-10-07 09:45:45,147 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 09:45:45,147 - INFO - Model: text-bison@002, Algorithm: bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01NkcgJiCUPUqWw1ga3gxQT4",
+  "content": [
+    {
+      "text": "Here's the bubble sort algorithm with line numbers annotated:\n\n```python\n# 1 def bubble_sort(arr):\n# 2     n = len(arr)\n# 3     for i in range(n):\n# 4         for j in range(0, n - i - 1):\n# 5             if arr[j] > arr[j + 1]:\n# 6                 arr[j], arr[j + 1] = arr[j + 1], arr[j]\n# 7     return arr\n\n# 8 result = bubble_sort([1, 2, 3])\n```\n\nFor the input [1, 2, 3], here are the executed line numbers in order:\n\n[2, 3, 4, 5, 4, 5, 4, 3, 4, 5, 4, 5, 4, 3, 7]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 257,
+    "output_tokens": 215
+  }
+}, Matched: False
+2024-10-07 10:52:06,128 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 10:52:06,131 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_0167k9bF5WskacycaNagSd2n",
+  "content": [
+    {
+      "text": "Here's the bubble sort algorithm with line numbers as comments:\n\n```python\ndef bubble_sort(arr):\n    n = len(arr) #1\n    for i in range(n): #2\n        for j in range(0, n - i - 1): #3\n            if arr[j] > arr[j + 1]: #4\n                arr[j], arr[j + 1] = arr[j + 1], arr[j] #5\n    return arr #6\n```\n\nFor the input [1, 2, 3], here's the list of executed line numbers in order:\n\n[1, 2, 3, 4, 3, 4, 3, 4, 2, 3, 4, 3, 4, 2, 3, 4, 2, 6]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 330,
+    "output_tokens": 196
+  }
+}, Matched: False
+2024-10-07 10:59:36,743 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 10:59:36,744 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01HQS6CQf1JKmeAKGPy2qRtT",
+  "content": [
+    {
+      "text": "[17,18,20,21,1,2,3,4,6,8,11,20,21,1,2,3,4,6,8,11,20,23,24,25,26,1,2,3,4,6,8,11,12,13,1,2,3,4,6,8,11,23,24,25,26,1,2,3,4,6,8,11,27]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 721,
+    "output_tokens": 110
+  }
+}, Matched: False
+2024-10-07 11:17:48,962 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 11:17:48,962 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01Kz3A72FLbHmRVRoBSCYx1V",
+  "content": [
+    {
+      "text": "Here's the bubble sort algorithm in Java with line numbers as comments:\n\n```java\npublic static void bubbleSort(int[] arr) {\n    int n = arr.length; //1\n    for (int i = 0; i < n - 1; i++) { //2\n        for (int j = 0; j < n - i - 1; j++) { //3\n            if (arr[j] > arr[j + 1]) { //4\n                int temp = arr[j]; //5\n                arr[j] = arr[j + 1]; //6\n                arr[j + 1] = temp; //7\n            }\n        }\n    }\n}\n```\n\nFor the input [1,2,3], here are the executed line numbers in order:\n\n[1,2,3,4,3,4,3,4,2,3,4,3,4,3,4,2]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 343,
+    "output_tokens": 217
+  }
+}, Matched: False
+2024-10-07 11:39:04,754 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 11:39:04,757 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01EmjryYRhwxPbyUeomFMqMM",
+  "content": [
+    {
+      "text": "Here's the bubble sort algorithm in Java with line numbers as comments:\n\n```java\npublic static void bubbleSort(int[] arr) {\n    int n = arr.length; //1\n    for (int i = 0; i < n - 1; i++) { //2\n        for (int j = 0; j < n - i - 1; j++) { //3\n            if (arr[j] > arr[j + 1]) { //4\n                int temp = arr[j]; //5\n                arr[j] = arr[j + 1]; //6\n                arr[j + 1] = temp; //7\n            }\n        }\n    }\n}\n```\n\nFor the input [1,2,3], here are the executed line numbers in order:\n\n[1,2,3,4,3,4,3,4,2,3,4,3,4,2]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 343,
+    "output_tokens": 213
+  }
+}, Matched: False
+2024-10-07 11:39:37,142 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 11:39:37,145 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01CgC5pEHna84vco5tRKUBHu",
+  "content": [
+    {
+      "text": "Here's the bubble sort algorithm in Java with line numbers as comments:\n\n```java\npublic static void bubbleSort(int[] arr) {\n    int n = arr.length; //1\n    for (int i = 0; i < n-1; i++) { //2\n        for (int j = 0; j < n-i-1; j++) { //3\n            if (arr[j] > arr[j+1]) { //4\n                int temp = arr[j]; //5\n                arr[j] = arr[j+1]; //6\n                arr[j+1] = temp; //7\n            }\n        }\n    }\n}\n```\n\nFor the input [1,2,3], here are the executed line numbers in order:\n\n[1,2,3,4,3,4,2,3,4,2]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 343,
+    "output_tokens": 200
+  }
+}, Matched: False
+2024-10-07 11:40:03,473 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 11:40:03,476 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01WK349ScVNVgsYwGBtaSDUs",
+  "content": [
+    {
+      "text": "Here's the bubble sort algorithm in C++ with line numbers annotated:\n\n```cpp\nvoid bubbleSort(int arr[], int n) {\n    for (int i = 0; i < n-1; i++) {                 //1\n        for (int j = 0; j < n-i-1; j++) {           //2\n            if (arr[j] > arr[j+1]) {                //3\n                int temp = arr[j];                  //4\n                arr[j] = arr[j+1];                  //5\n                arr[j+1] = temp;                    //6\n            }\n        }\n    }\n}\n```\n\nFor the input [1,2,3], here are the executed line numbers in order:\n\n[1,2,3,2,3,2,1,2,3,2,1]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 407,
+    "output_tokens": 202
+  }
+}, Matched: False
+2024-10-07 12:05:37,903 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 12:05:37,905 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_017kbmDRmvXmaA9brMtsidcA",
+  "content": [
+    {
+      "text": "[2,3,4,3,4,3,4,2,3,4,3,4,2,3,4]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 425,
+    "output_tokens": 34
+  }
+}, Matched: False
+2024-10-07 12:10:49,808 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output:  ```c++
+void bubble_sort(int arr[], int n) { //1
+    for (int i = 0; i < n - 1; i++) { //2
+        for (int j = 0; j < n - i - 1; j++) { //3
+            if (arr[j] > arr[j + 1]) { //4
+                int temp = arr[j]; //5
+                arr[j] = arr[j + 1]; //6
+                arr[j + 1] = temp; //7
+            }
+        }
+    }
+} //8
+```
+
+Input: [1,2,3]
+Output: [2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4, Matched: False
+2024-10-07 12:14:31,248 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output:  [2,3,4,5,3,4,5,3,4,5,3,4,5,6], Matched: False
+2024-10-07 12:25:40,837 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-07 12:25:40,839 - INFO - Model: text-bison@002, Algorithm: claude_bubble_sort, Input: [1, 2, 3], Output: {
+  "id": "msg_vrtx_01AxpqpcfXneHfV8fEMx9Q1F",
+  "content": [
+    {
+      "text": "[2,3,4,3,4,3,4,2,3,4,3,4,2,3,4]",
+      "type": "text"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20240620",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+    "input_tokens": 426,
+    "output_tokens": 34
+  }
+}, Matched: False
