@@ -280,3 +280,8 @@ Output: [2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4
     "output_tokens": 34
   }
 }, Matched: False
+2024-10-13 22:41:03,939 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-13 22:57:17,261 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-13 22:57:17,261 - INFO - Model: CLAUDE-3,5, Algorithm: has_close_elements, Input: [1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3, Output: [6,7,8,11], Matched: False
+2024-10-13 23:02:33,948 - INFO - HTTP Request: POST https://us-east5-aiplatform.googleapis.com/v1/projects/cs6158-structuralunderstanding/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict "HTTP/1.1 200 OK"
+2024-10-13 23:02:33,948 - INFO - Model: CLAUDE-3,5, Algorithm: has_close_elements, Input: [1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3, Output: [15, 17, 22], Matched: True
