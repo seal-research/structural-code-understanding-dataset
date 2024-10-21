@@ -13,17 +13,32 @@ def generate_symbols():
 # Function to add line identifiers to code
 def add_line_identifiers(code, enumerate_letters=False):
     lines = code.split('\n')
+    
     if enumerate_letters:
         # Use dynamically generated symbols for solution code lines
         symbols = generate_symbols()
+        
+        # Ensure there are enough symbols for all lines
         if len(lines) > len(symbols):
             raise IndexError("Not enough symbols to represent all lines.")
-        numbered_lines = [f"{line}  # {symbols[i]}" for i, line in enumerate(lines) if line.strip()]
-        symbol_dict = {i + 1: symbols[i] for i, line in enumerate(lines) if line.strip()}
+        
+        # Annotate each line with its corresponding symbol
+        numbered_lines = [
+            f"{line}  # {symbols[i]}" for i, line in enumerate(lines)
+        ]
+        
+        # Create a mapping of line numbers to symbols, including all lines
+        symbol_dict = {i + 1: symbols[i] for i in range(len(lines))}
+        
     else:
-        # Use numbers for test code lines
-        numbered_lines = [f"{line}  # {i + 1}" for i, line in enumerate(lines)]
-        symbol_dict = {i + 1: i + 1 for i, line in enumerate(lines)}
+        # Use numbers for test code lines, include all lines
+        numbered_lines = [
+            f"{line}  # {i + 1}" for i, line in enumerate(lines)
+        ]
+        
+        # Create a mapping of line numbers to their indices
+        symbol_dict = {i + 1: i + 1 for i in range(len(lines))}
+    
     return '\n'.join(numbered_lines), symbol_dict
 
 def prepare_solution_function(prompt_code, solution_code):
@@ -75,6 +90,7 @@ def run_code_and_trace(function_name: str, *args):
             # Get the line number from the frame
             line_number = frame.f_lineno
             line_numbers.append(line_number)  # Collect all line numbers including duplicates
+            print(f"Line executed: {line_number}")
         return collect_line_numbers
 
     # Set the trace function
@@ -244,7 +260,8 @@ def extend_dataset():
         candidate_function = prepare_solution_function(prompt_code, solution_code)
         
         # Add the candidate function to globals so it can be traced
-        exec(candidate_function, globals())  # Dynamically define the function in the current scope
+        if(not candidate_function in globals()):
+            exec(candidate_function, globals())  # Dynamically define the function in the current scope
         
         # Extract function calls from the test code
         modified_test_code, function_calls = extract_function_calls_with_ast(test_code, entry_point)
@@ -300,12 +317,95 @@ def extend_dataset():
     combined_df = pd.concat([filtered_df, new_results_df], ignore_index=True)
     
     # Save the combined DataFrame back to CSV
-    combined_df.to_csv('HumanEval_trace_results_filtered_2.csv', index=False)
+    combined_df.to_csv('HumanEval_trace_results_filtered_3.csv', index=False)
     
     # Output the number of new entries added
     print(f"Added {len(new_results)} new entries to 'HumanEval_trace_results_filtered.csv'.")
     
-extend_dataset()
+
+    
+# Function to recover line numbers based on the symbol trace
+def recover_lines_from_symbols(symbol_trace, symbol_dict):
+    return [symbol_dict[symbol] for symbol in symbol_trace if symbol in symbol_dict]
+
+# Main function to fix the CSV
+def fix_corrupt_traces_inplace(csv_file, code_column='Code_Indices', enumerate_letters=True):
+    # Read the CSV file
+    df = pd.read_csv(csv_file)
+
+    # Iterate over the rows
+    for i, row in df.iterrows():
+        executed_lines = ast.literal_eval(row['ExecutedLines'])  # Safely evaluate as list
+        executed_symbols = [symbol for symbol in str(row['ExecutedLines_Symbols'])] # Safely parse symbols as list
+
+        code = row[code_column]  # Get the code associated with the entry
+
+        # Check if any line number exceeds 500
+        if any(line > 500 for line in executed_lines):
+            # Add line identifiers to generate symbol-to-line mapping
+            _, symbol_dict = add_line_identifiers(code, enumerate_letters=enumerate_letters)
+            
+            symbol_dict = {y: x for x, y in symbol_dict.items()}
+            
+            # Recover the correct line numbers using the symbol trace
+            corrected_lines = recover_lines_from_symbols(executed_symbols, symbol_dict)
+            
+            # Replace the corrupt lines with the corrected ones
+            df.at[i, 'ExecutedLines'] = corrected_lines
+            print(f"Row {i} fixed: {executed_lines} -> {corrected_lines}")
+
+    # Save the fixed CSV inplace
+    df.to_csv('HumanEval_trace_expanded_fixed.csv', index=False)
+    print(f"CSV file HumanEval_trace_expanded_fixed.csv updated successfully.")
+
+# Apply the function on your CSV file
+# fix_corrupt_traces_inplace('HumanEval_trace_expanded.csv')
+
+import pandas as pd
+import json
+
+# Load the HumanEval data
+with open("HumanEval/human-eval-v2-20210705.jsonl", "r") as f:
+    human_eval_data = [json.loads(line) for line in f]
+
+# Load the DataFrame that needs reannotation
+expanded_df = pd.read_csv('HumanEval_trace_expanded_fixed.csv')
+
+# Create a dictionary for easy lookup and to keep track of covered tests
+task_dict = {task['task_id']: task for task in human_eval_data}
+covered_tasks = {}
+
+# Reannotate Code_Symbols
+for index, row in expanded_df.iterrows():
+    test_name = row['HumanEval_ID']
+    
+    # Skip if task already covered
+    if test_name in covered_tasks:
+        # Update the Code_Symbols without reprocessing
+        expanded_df.at[index, 'Code_Symbols'] = covered_tasks[test_name]
+        continue
+    
+    # Get the original task data if it exists
+    if test_name in task_dict:
+        original_task = task_dict[test_name]
+        prompt_code = original_task['prompt']
+        solution_code = original_task['canonical_solution']
+
+        # Prepare the solution function
+        candidate_function = prepare_solution_function(prompt_code, solution_code)
+
+        # Annotate with line identifiers
+        candidate_with_symbols, _ = add_line_identifiers(candidate_function, enumerate_letters=True)
+
+        # Store the annotated code for future reference
+        covered_tasks[test_name] = candidate_with_symbols
+        
+        # Update the DataFrame with the new symbols
+        expanded_df.at[index, 'Code_Symbols'] = candidate_with_symbols
+
+# Save the reannotated DataFrame back to CSV
+expanded_df.to_csv('HumanEval_trace_expanded_fixed_reannotated.csv', index=False)
+
 
 # =============================================================================
 # # Example usage:
