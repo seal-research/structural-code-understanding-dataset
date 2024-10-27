@@ -12,6 +12,7 @@ import requests
 import openai
 import vertexai
 import json
+import re
 
 # Set up logging
 logging.basicConfig(
@@ -22,7 +23,7 @@ logging.basicConfig(
 
 # Read the CSV file using pandas
 #df = pd.read_csv('Dataset/sorting_algorithm_trace_results.csv')
-df = pd.read_csv('Dataset/HumanEval_trace_results.csv')
+#df = pd.read_csv('Dataset/HumanEval_trace_results.csv')
 
 # Path to your service account key file
 key_path = "cs6158-structuralunderstanding-2647462afe3e.json"
@@ -58,7 +59,7 @@ def prompt_claude(project_id: str, region: str, prompt: str, max_tokens: int = 1
     reply = message.model_dump_json(indent=2)
     return reply
 
-def prompt_gemini(project_id: str, model_name: str, prompt: str, temperature: float = 0., max_tokens: int = 2048):
+def prompt_gemini(project_id: str, model_name: str, prompt: str, temperature: float = 0., max_tokens: int = 4096):
     """Prompt the Gemini model via Google Vertex AI."""
     vertexai.init(project=project_id, location="us-central1")
     model = GenerativeModel(model_name)
@@ -113,7 +114,7 @@ def predict_large_language_model_sample(
 # It is your task to return the called lines, in order, as a list. I will give you an example:
 # Source Code : """def simple_loop(x): #1
 #                     for i in range(3): #2
-#                         print(c+x) #3
+#                         print(i+x) #3
 #                     return i #4
 #               """
 # Input: (5)
@@ -238,6 +239,19 @@ def prompt_claude_with_backoff(project_id: str, region: str, prompt: str, max_to
 
     return exponential_backoff_retry(call_claude)
 
+def extract_last_python_list(text):
+    # Use regex to find all lists in the format of Python lists
+    matches = re.findall(r'\[.*?\]', text)
+    # Return the last match if available, otherwise None
+    return matches[-1] if matches else None
+
+def extract_last_python_list_open(text):
+    # Use regex to find all lists in the format of Python lists,
+    # allowing for the last list to be unclosed if at the end of the string.
+    matches = re.findall(r'\[.*?(?:\]|\s*$)', text)
+    # Return the last match if available, otherwise None
+    return matches[-1] if matches else None
+
 # Generalized prompt function to handle both Gemini and Claude
 def prompt_model_with_backoff(project_id: str, model_name: str, prompt: str, region=None):
     """Generalize the model prompt with exponential backoff."""
@@ -265,7 +279,7 @@ def process_batch(batch_df, model_name, project_id, region):
             It is your task to return the called lines, in order, as a list. I will give you an example:
             Source Code : """def simple_loop(x): #1
                                 for i in range(3): #2
-                                    print(c+x) #3
+                                    print(i+x) #3
                                 return i #4
                           """
             Input: (5)
@@ -274,7 +288,8 @@ def process_batch(batch_df, model_name, project_id, region):
             Here is the source code: {row['Code_Indices']}
             Here is the called function: {row['Name']}
             Here is the input to the function {row['FunctionCall']}
-            Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. No other output.
+            Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. Think about the solution step-by-step,
+            going through execution steps one at a time. Finally, print the solution as a list of executed steps.
             '''
             
             
@@ -282,6 +297,8 @@ def process_batch(batch_df, model_name, project_id, region):
             response = prompt_model_with_backoff(project_id ,model_name, prompt, region)
 
             actual_lines = row['ExecutedLines']
+
+            response = extract_last_python_list(response)
 
             # Calculate similarity or distance
             distance = calculate_distance(actual_lines, response)
@@ -355,7 +372,7 @@ def resend_failed_requests(csv_path, project_id, model_name, region=None):
             It is your task to return the called lines, in order, as a list. I will give you an example:
             Source Code : """def simple_loop(x): #1
                                 for i in range(3): #2
-                                    print(c+x) #3
+                                    print(i+x) #3
                                 return i #4
                           """
             Input: (5)
@@ -364,7 +381,8 @@ def resend_failed_requests(csv_path, project_id, model_name, region=None):
             Here is the source code: {row['Code_Indices']}
             Here is the called function: {row['Name']}
             Here is the input to the function {row['FunctionCall']}
-            Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. No other output.
+            Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. Think about the solution step-by-step,
+            going through execution steps one at a time. Finally, print the solution as a list of executed steps.
             '''
             
             # Call GPT-4 model with backoff retry
@@ -391,15 +409,115 @@ def resend_failed_requests(csv_path, project_id, model_name, region=None):
     df.to_csv(csv_path, index=False)
     print(f"CSV updated and saved to {csv_path}")
 
+def resend_requests_with_corrupt_file(csv_path_correct, csv_path_corrupted, project_id, model_name, region=None):
+    """
+    Iterate over the correct dataset and resend requests for rows that need correction based on the corrupted dataset.
+    
+    Args:
+        csv_path_correct (str): Path to the correct CSV file.
+        csv_path_corrupted (str): Path to the corrupted CSV file.
+        project_id (str): Azure or other project identifier.
+        model_name (str): Model name, e.g., "gpt-4o".
+        region (str): Optional, region for model if needed.
+    """
+    # Load both CSV files into DataFrames
+    df_correct = pd.read_csv(csv_path_correct)
+    df_corrupted = pd.read_csv(csv_path_corrupted)
+    
+    # Prepare a list to store the new rows that don't need correction
+    new_rows = []
+
+    # Iterate over the correct dataset
+    for index, row in df_correct.iterrows():
+        # Check if the row exists in the corrupted dataset
+        corrupted_row = df_corrupted[(df_corrupted['HumanEval_ID'] == row['HumanEval_ID']) & 
+                                      (df_corrupted['FunctionCall'] == row['FunctionCall'])]
+        
+        if not corrupted_row.empty:
+            # Check the conditions for sending requests
+            predicted = corrupted_row['Predicted'].values[0]
+            actual = row['ExecutedLines']
+            
+            try:
+                actual_list = eval(actual) if isinstance(actual, str) else actual
+            except:
+                actual_list = []
+
+            # Check conditions
+            if predicted == 'ERROR' or predicted == '[]':
+                pass  # Request will be sent
+            elif predicted == actual or any(arg in actual_list for arg in eval(predicted)):
+                pass  # Request will be sent
+            elif len(actual_list) > 1024:
+                pass  # Request will be sent due to list length exceeding 1024
+            else:
+                # Condition met to copy row without resending
+                new_rows.append(row)
+                continue  # Skip sending request
+
+        # If row not present or conditions apply, send request
+        prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
+        In the following, I will give you the source code of a program written in Python. The program may feature different functions, which may call each other.
+        To make the task more accessible to you, I have annotated the lines with their index as comments (those begin with a #).
+        The following is very important! *Please note that the function signatures are generally not called,
+        instead you should start with the first line of the function. This does not apply to the function call, of course.*
+        In addition to the function, I will give you an initial input and the called function.
+        It is your task to return the called lines, in order, as a list. I will give you an example:
+        Source Code : """def simple_loop(x): #1
+                            for i in range(3): #2
+                                print(i+x) #3
+                            return i #4
+                      """
+        Input: (5)
+        Correct solution: [2,3,2,3,2,3,2,4]
+        Now I will give you your task.
+        Here is the source code: {row['Code_Indices']}
+        Here is the called function: {row['Name']}
+        Here is the input to the function {row['FunctionCall']}
+        Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. Think about the solution step-by-step,
+        going through execution steps one at a time. Finally, print the solution as a list of executed steps.
+        '''
+        
+        try:
+            new_response = prompt_model_with_backoff(project_id, model_name, prompt, region)
+            
+            actual_lines = row['ExecutedLines']
+
+            response = extract_last_python_list_open(new_response)
+
+            # Calculate similarity or distance
+            distance = calculate_distance(actual_lines, response)
+
+            # Determine if the output matches the expected value
+            matching = (response == str(actual_lines) or response == str(actual_lines[1:]))
+
+            # Append result to the list
+            new_rows.append([row['HumanEval_ID'], row['Name'], row['FunctionCall'], response, actual_lines, matching, distance])
+
+        except Exception as e:
+            logging.error(f"Error processing entry {row['HumanEval_ID']}: {e}")
+            print(f"Error processing entry {row['HumanEval_ID']}: {e}")
+
+    # Create a DataFrame from the new rows and save it to a new CSV
+    df_new = pd.DataFrame(new_rows)
+    df_new.to_csv('Gemini1.5-Pro-CoT-Fixed.csv', index=False)
+    print(f"Corrected results saved to 'Gemini1.5-Pro-CoT-Fixed.csv'")
+
+
+# Interesting : Gemini gave out: HumanEval/132,is_nested,'[]]]]]]]]]]',"[17, 18, 19, 20, 21, 22, 23, 19, 20, 22, 23,  ... (repeats 9 more times), 19, 24, 25, 26, 27, 28, 29, 30, 31, 32]","[17, 18, 19, 20, 21, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 24, 25, 26, 27, 28, 29, 30, 31, 28, 32]",False,0.26013513513513514
+# once
+
 # Example usage with generalized prompt
-#model_name = "gpt4o"  # or use "gemini-1.5-pro-002"
+model_name = "gemini-1.5-pro-002"  # or use "gemini-1.5-pro-002"  "gpt4o"
 region = "us-east5"  # Required for Claude
+resend_requests_with_corrupt_file('Dataset/HumanEval_trace_expanded_fixed_reannotated.csv', 'Gemini1.5-Pro_HumanEval_CoT.csv', 'cs6158-structuralunderstanding', model_name, region=region)
+
 #results = batch_test_llm_on_code(df, model_name, project_id = 'cs6158-structuralunderstanding', batch_size=10, region=region)
-#save_results_to_csv(results, "GPT4o_HumanEval.csv")
+#save_results_to_csv(results, "Gemini1.5-Pro_HumanEval_CoT.csv")
 
 
 # Load the result CSV and the original dataset
-result_csv_path = 'Claude_HumanEval_fixed.csv'
+#result_csv_path = 'Claude_HumanEval_fixed.csv'
 
 # Load the CSVs into DataFrames
 import re
@@ -482,7 +600,7 @@ def clean_predictions(df):
 #          It is your task to return the called lines, in order, as a list. I will give you an example:
 #          Source Code : """def simple_loop(x): #1
 #                              for i in range(3): #2
-#                                  print(c+x) #3
+#                                  print(i+x) #3
 #                              return i #4
 #                        """
 #          Input: (5)
@@ -511,7 +629,7 @@ def clean_predictions(df):
 #              It is your task to return the called lines, in order, as a list. I will give you an example:
 #              Source Code : """def simple_loop(x): #1
 #                                  for i in range(3): #2
-#                                      print(c+x) #3
+#                                      print(i+x) #3
 #                                  return i #4
 #                            """
 #              Input: (5)
@@ -666,8 +784,8 @@ def eliminate_repetitions_and_compute_distances(new_results_df: pd.DataFrame, ou
     print(f"Filtered results CSV with eliminated consecutive duplicates has been created at {output_csv}.")
 
 
-df = pd.read_csv("Gemini_cleaned_humanEval_results_expanded.csv")
-eliminate_repetitions_and_compute_distances(df, "Gemini_cleaned_humanEval_results_expandedNoReps.csv")
+#df = pd.read_csv("Gemini_cleaned_humanEval_results_expanded.csv")
+#eliminate_repetitions_and_compute_distances(df, "Gemini_cleaned_humanEval_results_expandedNoReps.csv")
 
 # =============================================================================
 # one_shot_generative_prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
@@ -677,7 +795,7 @@ eliminate_repetitions_and_compute_distances(df, "Gemini_cleaned_humanEval_result
 # It is your task to return the called lines, in order, as a list. I will give you an example:
 # Source Code : """def simple_loop(x): #1
 #                     for i in range(3): #2
-#                         print(c+x) #3
+#                         print(i+x) #3
 #                     return i #4
 #               """
 # Input: (5)
