@@ -1,2 +1,6 @@
 cs6158-structuralunderstanding-2647462afe3e.json
 *__pycache__*
+model_queries.log
+.gitmodules
+Dataset/HumanEvalPlus_trace_results.csv
+cs6158_Azure.json
