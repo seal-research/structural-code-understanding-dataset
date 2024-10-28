@@ -23,7 +23,7 @@ logging.basicConfig(
 
 # Read the CSV file using pandas
 #df = pd.read_csv('Dataset/sorting_algorithm_trace_results.csv')
-#df = pd.read_csv('Dataset/HumanEval_trace_results.csv')
+df = pd.read_csv('Dataset/HumanEval_trace_expanded_fixed_reannotated.csv')
 
 # Path to your service account key file
 key_path = "cs6158-structuralunderstanding-2647462afe3e.json"
@@ -422,7 +422,7 @@ def resend_requests_with_corrupt_file(csv_path_correct, csv_path_corrupted, proj
     """
     # Load both CSV files into DataFrames
     df_correct = pd.read_csv(csv_path_correct)
-    df_corrupted = pd.read_csv(csv_path_corrupted)
+    df_corrupted = pd.read_csv(csv_path_corrupted, on_bad_lines='skip')
     
     # Prepare a list to store the new rows that don't need correction
     new_rows = []
@@ -508,12 +508,12 @@ def resend_requests_with_corrupt_file(csv_path_correct, csv_path_corrupted, proj
 # once
 
 # Example usage with generalized prompt
-model_name = "gemini-1.5-pro-002"  # or use "gemini-1.5-pro-002"  "gpt4o"
+model_name = "claude-3-5-sonnet@20240620"  # or use "gemini-1.5-pro-002"  "gpt4o"
 region = "us-east5"  # Required for Claude
-resend_requests_with_corrupt_file('Dataset/HumanEval_trace_expanded_fixed_reannotated.csv', 'Gemini1.5-Pro_HumanEval_CoT.csv', 'cs6158-structuralunderstanding', model_name, region=region)
+#resend_requests_with_corrupt_file('Dataset/HumanEval_trace_expanded_fixed_reannotated.csv', 'Gemini1.5-Pro_HumanEval_CoT.csv', 'cs6158-structuralunderstanding', model_name, region=region)
 
-#results = batch_test_llm_on_code(df, model_name, project_id = 'cs6158-structuralunderstanding', batch_size=10, region=region)
-#save_results_to_csv(results, "Gemini1.5-Pro_HumanEval_CoT.csv")
+results = batch_test_llm_on_code(df, model_name, project_id = 'cs6158-structuralunderstanding', batch_size=10, region=region)
+save_results_to_csv(results, "Claude3.5-Sonnet_HumanEval_CoT.csv")
 
 
 # Load the result CSV and the original dataset
@@ -784,8 +784,8 @@ def eliminate_repetitions_and_compute_distances(new_results_df: pd.DataFrame, ou
     print(f"Filtered results CSV with eliminated consecutive duplicates has been created at {output_csv}.")
 
 
-#df = pd.read_csv("Gemini_cleaned_humanEval_results_expanded.csv")
-#eliminate_repetitions_and_compute_distances(df, "Gemini_cleaned_humanEval_results_expandedNoReps.csv")
+#df = pd.read_csv("Gemini1.5-Pro-CoT-Fixed.csv")
+#eliminate_repetitions_and_compute_distances(df, "Gemini1.5-Pro-CoT-FixedNoReps.csv")
 
 # =============================================================================
 # one_shot_generative_prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
