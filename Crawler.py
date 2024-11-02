@@ -11,6 +11,8 @@ import requests
 from pathlib import Path
 from bs4 import BeautifulSoup
 from typing import List, Optional
+import os
+import shutil
 
 tagged = [
     "1671 - Minimum Number of Removals to Make Mountain Array",
@@ -61,6 +63,8 @@ tagged = [
     "3304 - Find the K-th Character in String Game I",
     "3307 - Find the K-th Character in String Game II",
 ]
+
+
 
 import requests
 from pathlib import Path
@@ -205,139 +209,259 @@ def check_java_for_recursion(java_code):
 
     return len(recursive_methods) > 0
 
-java_code = '''package arrays;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
-
-public class Solution {
-
-    public static void main(String[] args) {
-        Solution sol = new Solution();
-        sol.generateParenthesis(3);
-    }
-
-    Stack<Character> stack = new Stack<>();
-    List<String> res = new ArrayList<>();
-
-    public List<String> generateParenthesis(int n) {
-        backtrack(0, 0, n);
-        return res;
-    }
-
-    private void backtrack(int openN, int closedN, int n) {
-        if (openN == closedN && closedN == n) {
-            StringBuilder sb = new StringBuilder();
-            for (Character c: stack) {
-                sb.append(c);
-            }
-            res.add(sb.toString());
-        }
-        if (openN < n) {
-            stack.push('(');
-            backtrack(openN + 1, closedN, n);
-            stack.pop();
-        }
-        if (closedN < openN) {
-            stack.push(')');
-            backtrack(openN, closedN + 1, n);
-            stack.pop();
-        }
-    }
-}'''
-
-
-java_code_2 = '''class Solution {
-
-    public List<List<Integer>> combinationSum(int[] candidates, int target) {
-        List<List<Integer>> ans = new ArrayList<List<Integer>>();
-        List<Integer> cur = new ArrayList();
-        backtrack(candidates, target, ans, cur, 0);
-        return ans;
-    }
-
-    public void backtrack(
-        int[] candidates,
-        int target,
-        List<List<Integer>> ans,
-        List<Integer> cur,
-        int index
-    ) {
-        if (target == 0) {
-            ans.add(new ArrayList(cur));
-        } else if (target < 0 || index >= candidates.length) {
-            return;
-        } else {
-            cur.add(candidates[index]);
-            backtrack(candidates, target - candidates[index], ans, cur, index);
-
-            cur.remove(cur.get(cur.size() - 1));
-            backtrack(candidates, target, ans, cur, index + 1);
-        }
-    }
-}'''
-
-#print(check_java_for_recursion(java_code))
-#print(check_java_for_recursion(java_code_2))
-#print(1/0)
 
 def sanitize_code(code):
     # Remove non-ASCII characters
     return ''.join(filter(lambda x: ord(x) < 128, code))
 
-# Download files if they meet criteria
-for folder in folders:
-    if(folder == 'java'):
-        continue
-    response = requests.get(f"{repo_url}/{folder}")
+def Download_Recursion_LeetCode():
+    # Download files if they meet criteria
+    for folder in folders:
+        if(folder == 'java'):
+            continue
+        response = requests.get(f"{repo_url}/{folder}")
+        if response.status_code == 200:
+            files = response.json()
+            for file in files:
+                file_id = file['name'].split('-')[0] 
+                python_file_url = None
+                java_file_url = None
+                
+                # Check if files are already downloaded
+                already_downloaded = list(download_dir.glob(f"{file_id}*"))
+                if already_downloaded:
+                    print(f"Skipping {file['name']} as it is already downloaded.")
+                    continue
+
+                # Check for Python and Java files
+                python_file_url = file['download_url']
+                python_response = requests.get(python_file_url)
+                sanitized_code = sanitize_code(python_response.text)  # Sanitize code
+
+                # Dynamically define the function from response for checking
+                try:
+                    exec(sanitized_code, globals())  # Use exec to define the function in global scope
+                except NameError as e:
+                    print(f"NameError while executing {file['name']}: {e}")
+                    python_file_url = None
+                except SyntaxError as e:
+                    print(f"SyntaxError while executing {file['name']}: {e}")
+                    python_file_url = None
+                if not is_any_function_recursive(sanitized_code):  # file_id corresponds to function name
+                    print(f"{file_id} Python function is not recursive. Skipping.")
+                    continue
+
+                java_file_url = file['download_url'].replace('python', 'java').replace('.py', '.java')
+                java_response = requests.get(java_file_url)
+                if java_response.status_code == 404 or not check_java_for_recursion(java_response.text):
+                    print(f"{file_id} Java function is not recursive. Skipping.")
+                    continue
+                
+                # Download files only if both Python and Java versions are recursive
+                for url in (python_file_url, java_file_url):
+                    if(not url == None and not url == 'None'):
+                        file_response = requests.get(url)
+                        filename = url.split('/')[-1]
+                        file_path = download_dir / filename
+                        with open(file_path, 'wb') as f:
+                            f.write(file_response.content)
+                        print(f"Downloaded {filename} to {download_dir}")
+
+        else:
+            print(f"Failed to access {folder} directory.")
+
+# Base URL for the GitHub repository
+# Base URL for raw user content
+base_url = "https://raw.githubusercontent.com/walkccc/LeetCode/main/solutions"
+# Directories for saving downloaded files
+python_download_dir = Path("Dataset/Concurrency/Python")  # Directory for Python files
+java_download_dir = Path("Dataset/Concurrency/Java")      # Directory for Java files
+
+# Ensure download directories exist
+python_download_dir.mkdir(parents=True, exist_ok=True)
+java_download_dir.mkdir(parents=True, exist_ok=True)
+
+# List of tagged Concurrency IDs and their descriptions
+tagged_Concurrency = [
+    "1279. Traffic Light Controlled Intersection",
+    "1242. Web Crawler Multithreaded",
+    "1226. The Dining Philosophers",
+    "1195. Fizz Buzz Multithreaded",
+    "1188. Design Bounded Blocking Queue",
+    "1117. Building H2O",
+    "1116. Print Zero Even Odd",
+    "1115. Print FooBar Alternately",
+    "1114. Print in Order"
+]
+
+def Download_Concurrency_LeetCode():
+    """Download Python and Java files for specified concurrency problems."""
+    
+    for problem in tagged_Concurrency:
+        problem_id = problem.split('.')[0]  # Extract the ID from the problem description
+        
+        # Construct URLs for Python and Java files
+        python_file_url = f"{base_url}/{problem}/{problem_id}.py"
+        java_file_url = f"{base_url}/{problem}/{problem_id}.java"
+
+        # Download Python file
+        python_response = requests.get(python_file_url)
+        if python_response.status_code == 200:
+            with open(python_download_dir / f"{problem_id}.py", 'wb') as f:
+                f.write(python_response.content)
+            print(f"Downloaded Python file for ID {problem_id}: {problem_id}.py")
+        else:
+            print(f"Failed to download Python file for ID {problem_id}: {python_response.status_code} - {python_file_url}")
+
+        # Download Java file
+        java_response = requests.get(java_file_url)
+        if java_response.status_code == 200:
+            with open(java_download_dir / f"{problem_id}.java", 'wb') as f:
+                f.write(java_response.content)
+            print(f"Downloaded Java file for ID {problem_id}: {problem_id}.java")
+        else:
+            print(f"Failed to download Java file for ID {problem_id}: {java_response.status_code} - {java_file_url}")
+
+# Call the function
+Download_Concurrency_LeetCode()
+
+
+def get_problems():
+    """Return a list of problem names to extract."""
+    return [
+        "Active-object",
+        "Atomic-updates",
+        "Checkpoint-synchronization",
+        "Concurrent-computing",
+        "Determine-if-only-one-instance-is-running",
+        "Dining-philosophers",
+        "Events",
+        "Handle-a-signal",
+        "Metered-concurrency",
+        "Rendezvous",
+        "Synchronous-concurrency"
+    ]
+
+def get_recursion_problems():
+    """Return a list of recursion problem names to extract."""
+    return [
+        "Ackermann-function",
+        "Anonymous-recursion",
+        "Arithmetic-evaluation",
+        "Binary-search",
+        "Determine-sentence-type",
+        "Dragon-curve",
+        "Factorial",
+        "Fibonacci-sequence",
+        "FizzBuzz",
+        "Fractal-tree",
+        "General-FizzBuzz",
+        "Greatest-common-divisor",
+        "Least-common-multiple",
+        "Longest-common-subsequence",
+        "Man-or-boy-test",
+        "Maze-solving",
+        "Mutual-recursion",
+        "Palindrome-detection",
+        "Parse-EBNF",
+        "Partition-function-P",
+        "Power-set",
+        "Ramer-Douglas-Peucker-line-simplification",
+        "Sorting-algorithms/Merge-sort",
+        "Sorting-algorithms/Quicksort",
+        "Sudan-function",
+        "Towers-of-Hanoi",
+        "Tree-traversal",
+        "Variadic-fixed-point-combinator",
+        "Y-combinator"
+    ]
+
+def get_languages():
+    """Return a dictionary of languages and their corresponding directory names and file extensions."""
+    return {
+        "Python": ("Python", "py"),
+        "Java": ("Java", "java")
+    }
+
+def create_output_directory(base_dir):
+    """Create the base output directory if it does not exist."""
+    os.makedirs(base_dir, exist_ok=True)
+
+def construct_raw_file_url(base_raw_url, task_name, language, version_suffix=""):
+    """Construct the raw file URL for a given task and language, with an optional version suffix."""
+    return f"{base_raw_url}/Task/{task_name}/{language[0]}/{task_name.lower()}{version_suffix}.{language[1]}"
+
+def download_and_save_file(url, save_path):
+    """Download the file from a URL and save it locally."""
+    print(f"Downloading from: {url}")
+    response = requests.get(url)
     if response.status_code == 200:
-        files = response.json()
-        for file in files:
-            file_id = file['name'].split('-')[0] 
-            python_file_url = None
-            java_file_url = None
-            
-            # Check if files are already downloaded
-            already_downloaded = list(download_dir.glob(f"{file_id}*"))
-            if already_downloaded:
-                print(f"Skipping {file['name']} as it is already downloaded.")
-                continue
-
-            # Check for Python and Java files
-            python_file_url = file['download_url']
-            python_response = requests.get(python_file_url)
-            sanitized_code = sanitize_code(python_response.text)  # Sanitize code
-
-            # Dynamically define the function from response for checking
-            try:
-                exec(sanitized_code, globals())  # Use exec to define the function in global scope
-            except NameError as e:
-                print(f"NameError while executing {file['name']}: {e}")
-                python_file_url = None
-            except SyntaxError as e:
-                print(f"SyntaxError while executing {file['name']}: {e}")
-                python_file_url = None
-            if not is_any_function_recursive(sanitized_code):  # file_id corresponds to function name
-                print(f"{file_id} Python function is not recursive. Skipping.")
-                continue
-
-            java_file_url = file['download_url'].replace('python', 'java').replace('.py', '.java')
-            java_response = requests.get(java_file_url)
-            if java_response.status_code == 404 or not check_java_for_recursion(java_response.text):
-                print(f"{file_id} Java function is not recursive. Skipping.")
-                continue
-            
-            # Download files only if both Python and Java versions are recursive
-            for url in (python_file_url, java_file_url):
-                if(not url == None and not url == 'None'):
-                    file_response = requests.get(url)
-                    filename = url.split('/')[-1]
-                    file_path = download_dir / filename
-                    with open(file_path, 'wb') as f:
-                        f.write(file_response.content)
-                    print(f"Downloaded {filename} to {download_dir}")
-
+        with open(save_path, "w") as file:
+            file.write(response.text)
+        print(f"Saved to: {save_path}")
+        return True
     else:
-        print(f"Failed to access {folder} directory.")
+        print(f"Failed to download {url} with status code: {response.status_code}")
+    return False
+
+def extract_code_files(base_raw_url, output_dir, type=0):
+    """Main function to extract code files for the specified problems and languages."""
+    if(type==0):
+        problems = get_problems()
+    elif(type==1):
+        problems = get_recursion_problems()
+    languages = get_languages()
+    create_output_directory(output_dir)
+
+    for problem in problems:
+        for language, (lang_dir, extension) in languages.items():
+            # Create language-specific directory
+            language_dir = os.path.join(output_dir, lang_dir)
+            os.makedirs(language_dir, exist_ok=True)
+
+            # Attempt to download the standard file
+            raw_file_url = construct_raw_file_url(base_raw_url, problem, (lang_dir, extension))
+            save_path = os.path.join(language_dir, f"{problem.lower()}.{extension}")
+
+            if not download_and_save_file(raw_file_url, save_path):
+                # If the standard file fails, try the first enumerated option (e.g., -1)
+                enumerated_file_url = construct_raw_file_url(base_raw_url, problem, (lang_dir, extension), "-1")
+                save_path = os.path.join(language_dir, f"{problem.lower()}-1.{extension}")
+                download_and_save_file(enumerated_file_url, save_path)
+
+def fetch_rosetta_concurrency():
+    """Fetch Rosetta Code concurrency examples from GitHub."""
+    base_raw_url = "https://raw.githubusercontent.com/acmeism/RosettaCodeData/main"
+    output_dir = "Dataset/Concurrency"
+    extract_code_files(base_raw_url, output_dir)
+    print("Download completed.")
+
+def fetch_rosetta_recursion():
+    """Fetch Rosetta Code concurrency examples from GitHub."""
+    base_raw_url = "https://raw.githubusercontent.com/acmeism/RosettaCodeData/main"
+    output_dir = "Dataset/Recursion"
+    extract_code_files(base_raw_url, output_dir, type=1)
+    print("Download completed.")
+
+def sort_files_into_recursion_directory(source_dir, target_dir):
+    """Sort Python and Java files from the source directory into the target recursion directory."""
+    # Define the target directories for Python and Java files
+    python_target_dir = os.path.join(target_dir, "Python")
+    java_target_dir = os.path.join(target_dir, "Java")
+
+    # Create the target directories if they do not exist
+    os.makedirs(python_target_dir, exist_ok=True)
+    os.makedirs(java_target_dir, exist_ok=True)
+
+    # Iterate through files in the source directory
+    for filename in os.listdir(source_dir):
+        source_file_path = os.path.join(source_dir, filename)
+        if os.path.isfile(source_file_path):  # Check if it's a file
+            if filename.endswith(".py"):
+                # Move Python files
+                shutil.move(source_file_path, os.path.join(python_target_dir, filename))
+                print(f"Moved: {filename} to {python_target_dir}")
+            elif filename.endswith(".java"):
+                # Move Java files
+                shutil.move(source_file_path, os.path.join(java_target_dir, filename))
+                print(f"Moved: {filename} to {java_target_dir}")
