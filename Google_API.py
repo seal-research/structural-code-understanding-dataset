@@ -26,13 +26,13 @@ logging.basicConfig(
 df = pd.read_csv('Dataset/HumanEval_trace_expanded_fixed_reannotated.csv')
 
 # Path to your service account key file
-key_path = "cs6158-structuralunderstanding-2647462afe3e.json"
+key_path = "nbtest-439420-28cc48108dc9.json"#"cs6158-structuralunderstanding-2647462afe3e.json"
 
 # Create credentials using the service account key
 credentials = service_account.Credentials.from_service_account_file(key_path)
 
 # Initialize Google Cloud AI Platform
-google.cloud.aiplatform.init(project="CS6158-StructuralUnderstanding", location="us-central1", credentials=credentials)
+google.cloud.aiplatform.init(project="nbtest-439420", location="us-central1", credentials=credentials)
 
 # Load the API key from the JSON file
 def load_api_key():
@@ -44,6 +44,8 @@ def load_api_key():
 AZURE_OPENAI_API_KEY = load_api_key()  # Get the key from the JSON file
 AZURE_OPENAI_ENDPOINT = "https://cs6158structuralunderstanding.openai.azure.com/"#"https://cs6158structuralunderstanding.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview"
 AZURE_DEPLOYMENT_NAME = "gpt-4o"
+
+alternative_id = 'nbtest-439420'
 
 
 def prompt_claude(project_id: str, region: str, prompt: str, max_tokens: int = 1024):
@@ -290,7 +292,6 @@ def process_batch(batch_df, model_name, project_id, region):
             going through execution steps one at a time. Finally, print the solution as a list of executed steps.
             '''
             
-            
             # Use the appropriate model with backoff
             response = prompt_model_with_backoff(project_id ,model_name, prompt, region)
 
@@ -404,7 +405,7 @@ def resend_failed_requests(csv_path, project_id, model_name, region=None):
             going through execution steps one at a time. Finally, print the solution as a list of executed steps.
             '''
             
-            # Call GPT-4 model with backoff retry
+            # Call model with backoff retry
             new_response = prompt_model_with_backoff(project_id, model_name, prompt, region)
 
             row['predicted'] = new_response
@@ -473,7 +474,7 @@ def resend_requests_with_corrupt_file(csv_path_correct, csv_path_corrupted, proj
     """
     # Load both CSV files into DataFrames
     df_correct = pd.read_csv(csv_path_correct)
-    df_corrupted = pd.read_csv(csv_path_corrupted, on_bad_lines='skip')
+    df_corrupted = pd.read_csv(csv_path_corrupted)
     
     # Prepare a list to store the new rows that don't need correction
     new_rows = []
@@ -484,23 +485,30 @@ def resend_requests_with_corrupt_file(csv_path_correct, csv_path_corrupted, proj
         corrupted_row = df_corrupted[(df_corrupted['HumanEval_ID'] == row['HumanEval_ID']) & 
                                       (df_corrupted['FunctionCall'] == row['FunctionCall'])]
         
-        if not corrupted_row.empty:
+        actual = row['ExecutedLines']
+        
+        if not corrupted_row.empty or len(actual>1024):
             # Check the conditions for sending requests
             predicted = corrupted_row['Predicted'].values[0]
-            actual = row['ExecutedLines']
+            arguments = '['+row['FunctionCall']+']'
             
             try:
                 actual_list = eval(actual) if isinstance(actual, str) else actual
+                argument_list = eval(arguments) if isinstance(arguments, str) else arguments
+                if predicted != 'ERROR':
+                    predicted_list = eval(predicted) if isinstance (predicted, str) else eval(predicted+']')
             except:
                 actual_list = []
+                argument_list = []
+                predicted_list = []
 
             # Check conditions
             if predicted == 'ERROR' or predicted == '[]':
                 pass  # Request will be sent
-            elif predicted == actual or any(arg in actual_list for arg in eval(predicted)):
+            elif predicted == arguments or predicted_list == argument_list:
                 pass  # Request will be sent
             elif len(actual_list) > 1024:
-                continue  # Request will be sent due to list length exceeding 1024
+                continue  # Row is invalid due to its execution trace being too long
             else:
                 # Condition met to copy row without resending
                 new_rows.append(row)
@@ -551,17 +559,136 @@ def resend_requests_with_corrupt_file(csv_path_correct, csv_path_corrupted, proj
 
     # Create a DataFrame from the new rows and save it to a new CSV
     df_new = pd.DataFrame(new_rows)
-    df_new.to_csv('Gemini1.5-Pro-CoT-Fixed.csv', index=False)
-    print(f"Corrected results saved to 'Gemini1.5-Pro-CoT-Fixed.csv'")
+    df_new.to_csv('Claude3.5-Sonnet_HumanEval_CoT_fixed.csv', index=False)
+    print(f"Corrected results saved to 'Claude3.5-Sonnet_HumanEval_CoT_fixed.csv'")
+    
+import pandas as pd
+import re
+import logging
+
+def is_sublist_contained(sub_list, main_list):
+    # Flatten the 2D main_list to handle nested structures
+    flattened_list = []
+    for item in main_list:
+        if isinstance(item, list):
+            flattened_list.extend(item)
+        else:
+            flattened_list.append(item)
+    
+    # Check if all elements of sub_list are in the flattened main_list
+    return all(elem in flattened_list for elem in sub_list)
+
+def resend_requests_with_criteria(csv_path_correct, csv_path_corrupted, project_id, model_name, region=None):
+    """
+    Iterate over the correct dataset and resend requests for rows that need correction based on the corrupted dataset.
+    
+    Args:
+        csv_path_correct (str): Path to the correct CSV file.
+        csv_path_corrupted (str): Path to the corrupted CSV file.
+        project_id (str): Azure or other project identifier.
+        model_name (str): Model name, e.g., "gpt-4o".
+        region (str): Optional, region for model if needed.
+    """
+    # Load both CSV files into DataFrames
+    df_correct = pd.read_csv(csv_path_correct)
+    df_corrupted = pd.read_csv(csv_path_corrupted)
+    
+    # Prepare a list to store the new rows that don't need correction
+    new_rows = []
+
+    # Iterate over the correct dataset
+    for index, row in df_correct.iterrows():
+        # Check if the row exists in the corrupted dataset
+        corrupted_row = df_corrupted[(df_corrupted['HumanEval_ID'] == row['HumanEval_ID']) & 
+                                      (df_corrupted['FunctionCall'] == row['FunctionCall'])]
+        
+        actual = row['ExecutedLines']
+        
+        if not corrupted_row.empty:
+            # Extract the predicted value from the corrupted row
+            predicted = corrupted_row['Predicted'].values[0]
+            arguments = '[' + row['FunctionCall'] + ']'
+            
+            try:
+                actual_list = eval(actual) if isinstance(actual, str) else actual
+                argument_list = eval(arguments) if isinstance(arguments, str) else arguments
+                
+                if predicted != 'ERROR' and predicted != '[]':
+                    predicted_list = eval(predicted) if isinstance(predicted, str) else predicted
+
+            except Exception as e:
+                logging.error(f"Error evaluating lists for entry {row['HumanEval_ID']}: {e}")
+                actual_list = []
+                argument_list = []
+                predicted_list = []
+
+            # Check conditions for sending requests
+            if predicted == 'ERROR' or predicted == '[]' or predicted == arguments or is_sublist_contained(predicted_list, argument_list):
+                # Resend request logic here
+                prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
+                In the following, I will give you the source code of a program written in Python. The program may feature different functions, which may call each other.
+                To make the task more accessible to you, I have annotated the lines with their index as comments (those begin with a #).
+                The following is very important! *Please note that the function signatures are generally not called,
+                instead you should start with the first line of the function. This does not apply to the function call, of course.*
+                In addition to the function, I will give you an initial input and the called function.
+                It is your task to return the called lines, in order, as a list. I will give you an example:
+                Source Code : """def simple_loop(x): #1
+                                    for i in range(3): #2
+                                        print(i+x) #3
+                                    return i #4
+                              """
+                Input: (5)
+                Correct solution: [2,3,2,3,2,3,2,4]
+                Now I will give you your task.
+                Here is the source code: {row['Code_Indices']}
+                Here is the called function: {row['Name']}
+                Here is the input to the function {row['FunctionCall']}
+                Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. Think about the solution step-by-step,
+                going through execution steps one at a time. Finally, print the solution as a list of executed steps.
+                '''
+                
+                try:
+                    
+                    print("Sending Request")
+                    
+                    new_response = prompt_model_with_backoff(project_id, model_name, prompt, region)
+
+                    response = extract_last_python_list_open(new_response)
+                    distance = calculate_distance(actual, response)
+                    matching = (response == str(actual) or response == str(actual)[1:])
+
+                    # Append result to the new rows list
+                    new_rows.append([row['HumanEval_ID'], row['Name'], row['FunctionCall'], response, actual, matching, distance])
+
+                except Exception as e:
+                    logging.error(f"Error processing entry {row['HumanEval_ID']}: {e}")
+                    print(f"Error processing entry {row['HumanEval_ID']}: {e}")
+
+            else:
+                # Copy the row as is without modification
+                print("Adding correct row")
+                new_rows.append([row['HumanEval_ID'], row['Name'], row['FunctionCall'], 
+                                 corrupted_row['Predicted'].values[0], 
+                                 row['ExecutedLines'], 
+                                 corrupted_row['Matched'].values[0],  # Retain original matched status
+                                 corrupted_row['Distance'].values[0]])  # Retain original distance
+
+
+    # Create a DataFrame from the new rows and save it to a new CSV
+    df_new = pd.DataFrame(new_rows, columns=['HumanEval_ID', 'Name', 'FunctionCall', 'Predicted', 
+                                              'ExecutedLines', 'Matched', 'Distance'])
+    df_new.to_csv('Claude3.5-Sonnet_HumanEval_CoT_fixed.csv', index=False)
+    print(f"Corrected results saved to 'Claude3.5-Sonnet_HumanEval_CoT_fixed.csv'")
+
 
 
 # Interesting : Gemini gave out: HumanEval/132,is_nested,'[]]]]]]]]]]',"[17, 18, 19, 20, 21, 22, 23, 19, 20, 22, 23,  ... (repeats 9 more times), 19, 24, 25, 26, 27, 28, 29, 30, 31, 32]","[17, 18, 19, 20, 21, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 20, 23, 19, 24, 25, 26, 27, 28, 29, 30, 31, 28, 32]",False,0.26013513513513514
 # once
 
 # Example usage with generalized prompt
-model_name = "gpt4o"  # or use "gemini-1.5-pro-002"  "gpt4o"
-region = "us-east5"  # Required for Claude
-#resend_requests_with_corrupt_file('Dataset/HumanEval_trace_expanded_fixed_reannotated.csv', 'Gemini1.5-Pro_HumanEval_CoT.csv', 'cs6158-structuralunderstanding', model_name, region=region)
+#model_name = "claude-3-5-sonnet@20240620"  # or use "gemini-1.5-pro-002"  "gpt4o"
+#region = "us-east5"  # Required for Claude
+#resend_requests_with_criteria('Dataset/HumanEval_trace_expanded_fixed_reannotated.csv', 'Claude3.5-Sonnet_HumanEval_CoT.csv', 'nbtest-439420', model_name, region=region)
 
 #results = batch_test_llm_on_code(df, model_name, project_id = 'cs6158-structuralunderstanding', batch_size=20, region=region)
 #save_results_to_csv(results, "GPT4o_HumanEval_CoT.csv")
@@ -621,8 +748,8 @@ def clean_predictions(df):
 
 # =============================================================================
 #  # Define the paths for the CSV files
-expanded_csv_path = 'Dataset/HumanEval_trace_expanded_fixed_reannotated.csv'
-results_csv_path = 'GPT4o_HumanEval_CoT.csv'
+#expanded_csv_path = 'Dataset/HumanEval_trace_expanded_fixed_reannotated.csv'
+#results_csv_path = 'GPT4o_HumanEval_CoT.csv'
   
 # Load the expanded and results CSVs into DataFrames
 # =============================================================================
@@ -733,13 +860,13 @@ results_csv_path = 'GPT4o_HumanEval_CoT.csv'
 # =============================================================================
 
 # Convert the new results into a DataFrame
-new_results_df = pd.DataFrame(new_results)
+#new_results_df = pd.DataFrame(new_results)
  
 # Append new results to the existing results DataFrame
-results_df = pd.concat([results_df, new_results_df], ignore_index=True)
+#results_df = pd.concat([results_df, new_results_df], ignore_index=True)
  
 # Save the updated DataFrame back to CSV, overwriting the existing file
-results_df.to_csv("Gemini_cleaned_humanEval_results_expanded.csv", index=False)
+#results_df.to_csv("Gemini_cleaned_humanEval_results_expanded.csv", index=False)
 
 def safe_eval_list(list_str):
     try:
@@ -836,8 +963,53 @@ def eliminate_repetitions_and_compute_distances(new_results_df: pd.DataFrame, ou
     print(f"Filtered results CSV with eliminated consecutive duplicates has been created at {output_csv}.")
 
 
-#df = pd.read_csv("Gemini1.5-Pro-CoT-Fixed.csv")
-#eliminate_repetitions_and_compute_distances(df, "Gemini1.5-Pro-CoT-FixedNoReps.csv")
+df = pd.read_csv("Claude3.5-Sonnet_HumanEval_CoT_fixed.csv")
+eliminate_repetitions_and_compute_distances(df, "Claude3.5-Sonnet_HumanEval_CoT_fixedNoReps.csv")
+
+def clean_and_compute_metrics(df):
+    def clean_predicted_list(pred):
+        # Strip leading and trailing whitespace
+        pred = pred.strip()
+
+        # Normalize multiple whitespaces to a single space between elements
+        pred = re.sub(r'\s*,\s*', ', ', pred)  # Ensure correct spacing around commas
+
+        # Check if the list is missing a closing bracket
+        added_closing_bracket = False
+        if not pred.endswith(']'):
+            pred += ']'  # Temporarily add a closing bracket for processing
+            added_closing_bracket = True
+
+        # If a bracket was added, remove it before finalizing
+        if added_closing_bracket:
+            pred = pred[:-1]
+
+        return pred
+
+    # Clean the 'Predicted' column
+    df['Predicted'] = df['Predicted'].apply(clean_predicted_list)
+
+    # Recompute the 'Match' column using a simple string comparison
+    df['Match'] = df.apply(
+        lambda row: row['Actual'] == row['Predicted'],
+        axis=1
+    )
+
+    # Recompute the 'Distance' column using the string-based distance function
+    df['Distance'] = df.apply(
+        lambda row: calculate_distance(row['Actual'], row['Predicted']),
+        axis=1
+    )
+
+    return df
+
+#df = pd.read_csv("Claude3.5-Sonnet_HumanEval_CoT_fixed.csv")
+
+# Apply the function to clean and update the dataframe
+#df = clean_and_compute_metrics(df)
+
+# Save the updated dataframe back to the file (overwrite the original)
+#df.to_csv('Claude3.5-Sonnet_HumanEval_CoT_fixed_aligned.csv', index=False)
 
 # =============================================================================
 # one_shot_generative_prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.

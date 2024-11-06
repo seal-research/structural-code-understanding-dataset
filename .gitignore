@@ -4,3 +4,4 @@ model_queries.log
 .gitmodules
 Dataset/HumanEvalPlus_trace_results.csv
 cs6158_Azure.json
+Gemini_Key.txt
