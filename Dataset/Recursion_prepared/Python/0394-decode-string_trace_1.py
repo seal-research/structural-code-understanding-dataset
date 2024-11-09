@@ -3,11 +3,11 @@ class Solution:
         stack = []
 
         for char in s:
-            if char is not "]":
+            if char != "]":
                 stack.append(char)
             else:
                 sub_str = ""
-                while stack[-1] is not "[":
+                while stack[-1] != "[":
                     sub_str = stack.pop() + sub_str
                 stack.pop()
 

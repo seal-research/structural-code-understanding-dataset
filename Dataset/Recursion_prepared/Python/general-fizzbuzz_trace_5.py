@@ -8,4 +8,4 @@ def genfizzbuzz(factorwords, numbers):
     return '\n'.join(lines)
 
 if __name__ == '__main__':
-    print(genfizzbuzz([(7, 'Seven'), (11, 'Eleven')], range(1, 30)))
+    print(genfizzbuzz([(7, 'Seven'), (11, 'Eleven')], range(1, 10)))

@@ -8,4 +8,5 @@ def F(n,x,y):
   else:
     return F(n - 1, F(n, x, y - 1), F(n, x, y - 1) + y)
 
-print("F(3,1,1) = ", F(3,1,1))
+if __name__ == '__main__':
+  print("F(0,3,4) = ", F(0,3,4))

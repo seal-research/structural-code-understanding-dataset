@@ -1,13 +1,12 @@
-from math import *
-
-def analytic_fibonacci(n):
-  sqrt_5 = sqrt(5);
-  p = (1 + sqrt_5) / 2;
-  q = 1/p;
-  return int( (p**n + q**n) / sqrt_5 + 0.5 )
-
-for i in range(1,31):
-  print analytic_fibonacci(i),
+def fibonacci(n):
+    # Base cases: fib(0) = 0, fib(1) = 1
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    # Recursive case: fib(n) = fib(n-1) + fib(n-2)
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
 
 if __name__ == "__main__":
-  print(analytic_fibonacci(25))
+  print(fibonacci(25))

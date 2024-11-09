@@ -1,3 +1,5 @@
+from functools import reduce
+
 def list_powerset(lst):
     result = [[]]
     for x in lst:
