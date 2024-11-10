@@ -82,6 +82,22 @@ class Account:
 
 
 if __name__ == "__main__":
-    account = Account(1, Customer(2, "Ha Gia Kinh", gender='m'), 10000.0)
-    account.withdraw(1000)
-    print(account)
+    customer1 = Customer(2, "Ha Gia Kinh", gender='m', discount=0.1)  # 10% discount
+    customer2 = Customer(3, "Nguyen Thao", gender='f', discount=0.05)  # 5% discount
+    customer3 = Customer(4, "Pham Tuong", gender='m', discount=0.2)  # 20% discount
+    
+    account1 = Account(1, customer1, 10000.0)
+    account2 = Account(2, customer2, 5000.0)
+    account3 = Account(3, customer3, 2000.0)
+    
+    # Perform transactions with discounts applied
+    account1.withdraw(1000)
+    account2.deposit(2000)
+    account3.withdraw(2500)
+    account2.deposit(1500)
+    account3.withdraw(500)
+    
+    # Apply discounts to deposits and withdrawals
+    account1.deposit(5000 * (1 - customer1.getDiscount()))  # Applying customer discount
+    account2.withdraw(2000 * (1 - customer2.getDiscount()))  # Applying customer discount
+    account3.deposit(3000 * (1 - customer3.getDiscount()))  # Applying customer discount

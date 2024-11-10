@@ -4,6 +4,8 @@ def factorial(n):
         return 1
     # Recursive case: n! = n * (n-1)!
     else:
-        return n * factorial(n - 1)if __name__ == "__main__":
-n = 10
-print(factorial(n))
+        return n * factorial(n - 1)
+
+if __name__ == "__main__":
+    n = 10
+    print(factorial(n))

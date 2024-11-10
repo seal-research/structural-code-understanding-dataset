@@ -30,7 +30,7 @@ class Solution:
         res = []
         for r in range(ROWS):
             for c in range(COLS):
-                if (r, c) in pac and (r, c) in atl):
+                if (r, c) in pac and (r, c) in atl:
                     res.append([r, c])
         return res
 

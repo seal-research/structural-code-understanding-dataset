@@ -7,7 +7,10 @@ class Solution:
                 return -x
             if operator == "*":
                 return x * y
-            return int(x / y)
+            if y != 0:
+                return int(x / y)
+            else: 
+                return 0
         
         def solve(i):
             stack = []

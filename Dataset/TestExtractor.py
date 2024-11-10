@@ -5,7 +5,7 @@ import random
 import logging
 import os
 import re
-from typing import List, Set, Dict
+from typing import List, Dict
 from concurrent.futures import ThreadPoolExecutor
 
 logging.basicConfig(level=logging.INFO)
@@ -19,59 +19,36 @@ def load_api_key():
         logging.error(f"Error loading API key: {str(e)}")
         raise
 
-# Azure configuration
 AZURE_OPENAI_API_KEY = load_api_key()
-AZURE_OPENAI_ENDPOINT = "https://cs6158structuralunderstanding.openai.azure.com/"
-AZURE_DEPLOYMENT_NAME = "gpt-4o"
 
 def get_file_base_name(filename: str) -> str:
-    """Get the base name of a file without extension and potential language suffix."""
     base = os.path.splitext(filename)[0]
-    # Remove potential language-specific suffixes if they exist
-    base = re.sub(r'_(java|py|python|java)$', '', base.lower())
+    base = re.sub(r'_trace_\d+$', '', base.lower())  # Remove trace number
+    base = re.sub(r'_(java|py|python|java)$', '', base)
     return base
 
-def find_matching_files(base_dirs: List[str]) -> Dict[str, Dict[str, str]]:
-    """
-    Find matching files across Python and Java directories.
-    Returns a dict of {base_name: {'Python': python_path, 'Java': java_path}}
-    """
-    matches = {}
+def find_test_files(base_dirs: List[str]) -> Dict[str, Dict[str, List[str]]]:
+    """Find all test files in the prepared directories."""
+    test_files = {}
     
     for base_dir in base_dirs:
-        py_dir = os.path.join(base_dir, 'Python')
-        java_dir = os.path.join(base_dir, 'Java')
+        py_dir = os.path.join(f"{base_dir}_prepared", 'Python')
+        java_dir = os.path.join(f"{base_dir}_prepared", 'Java')
         
-        if not (os.path.exists(py_dir) and os.path.exists(java_dir)):
-            continue
+        for dir_path in [py_dir, java_dir]:
+            if not os.path.exists(dir_path):
+                continue
+                
+            lang = 'Python' if 'Python' in dir_path else 'Java'
+            files = [f for f in os.listdir(dir_path) if f.endswith('.py' if lang == 'Python' else '.java')]
             
-        # Get all Python and Java files
-        py_files = {get_file_base_name(f): os.path.join(py_dir, f) 
-                   for f in os.listdir(py_dir) if f.endswith('.py')}
-        java_files = {get_file_base_name(f): os.path.join(java_dir, f) 
-                     for f in os.listdir(java_dir) if f.endswith('.java')}
-        
-        # Find matches
-        for base_name in set(py_files.keys()) | set(java_files.keys()):
-            if base_name not in matches:
-                matches[base_name] = {}
-            if base_name in py_files:
-                matches[base_name]['Python'] = py_files[base_name]
-            if base_name in java_files:
-                matches[base_name]['Java'] = java_files[base_name]
+            for file in files:
+                base_name = get_file_base_name(file)
+                if base_name not in test_files:
+                    test_files[base_name] = {'Python': [], 'Java': []}
+                test_files[base_name][lang].append(os.path.join(dir_path, file))
     
-    return matches
-
-def get_expected_output_files(src_path: str, dest_dir: str, file_type: str) -> List[str]:
-    """Generate the list of expected output files for a given source file."""
-    base_name = os.path.splitext(os.path.basename(src_path))[0]
-    ext = '.py' if file_type == 'py' else '.java'
-    return [os.path.join(dest_dir, f"{base_name}_trace_{i}{ext}") for i in range(1, 6)]
-
-def get_missing_files(src_path: str, dest_dir: str, file_type: str) -> List[str]:
-    """Check which of the expected output files are missing."""
-    expected_files = get_expected_output_files(src_path, dest_dir, file_type)
-    return [f for f in expected_files if not os.path.exists(f)]
+    return test_files
 
 def prompt_gpt4o_with_backoff(prompt: str, max_tokens: int = 4096):
     """Wrap GPT-4 prompt with exponential backoff."""
@@ -118,13 +95,13 @@ def exponential_backoff_retry(func, retries=10, backoff_factor=2, max_wait=120):
                 wait = min(wait * backoff_factor, max_wait)
             else:
                 logging.warning(f"Error on attempt {attempt + 1}: {str(e)}. Retrying...")
-                time.sleep(1)  # Brief pause before retry
+                time.sleep(1)
     
     logging.error(f"Failed after {retries} attempts. Last error: {str(last_exception)}")
     raise last_exception
 
 def read_file_with_fallback(file_path: str) -> str:
-    """Read file content with multiple encoding attempts and error handling."""
+    """Read file content with multiple encoding attempts."""
     encodings = ['utf-8', 'latin1', 'cp1252', 'iso-8859-1', 'ascii']
     errors = ['strict', 'ignore', 'replace']
     
@@ -133,220 +110,152 @@ def read_file_with_fallback(file_path: str) -> str:
             try:
                 with open(file_path, 'r', encoding=encoding, errors=error_handling) as file:
                     content = file.read()
-                    if content.strip():  # Check if content is not empty
+                    if content.strip():
                         return content
-            except Exception as e:
+            except Exception:
                 continue
     
     raise ValueError(f"Could not read file {file_path} with any encoding method")
 
-def modify_existing_version(version: str) -> str:
-    """Modify an existing test case version to create a variation."""
-    # Simple modification: add a random number to any numeric literals
-    import random
-    modified = version
-    
-    # Find numeric literals
-    numbers = re.findall(r'\b\d+\b', version)
-    for number in numbers:
-        # Modify each number slightly
-        new_number = str(int(number) + random.randint(1, 10))
-        modified = modified.replace(number, new_number, 1)  # Replace only first occurrence
-    
-    return modified
+def generate_validation_prompt(content: str, file_type: str, category: str) -> str:
+    """Generate prompt to validate test cases based on category."""
+    base_prompt = f"""Analyze this {'Python' if file_type == 'py' else 'Java'} test case and verify:
 
-
-def sanitize_response(response: str) -> str:
-    """Clean and validate GPT response."""
-    # Remove common problematic elements
-    cleaned = re.sub(r'```[^`]*```', '', response, flags=re.DOTALL)
-    cleaned = re.sub(r'```.*?\n', '', cleaned)
-    cleaned = re.sub(r'\n```', '', cleaned)
-    cleaned = re.sub(r'^.*?Here are.*?\n', '', cleaned, flags=re.DOTALL)
-    cleaned = re.sub(r'^.*?versions:.*?\n', '', cleaned, flags=re.DOTALL)
-    
-    return cleaned.strip()
-
-def extract_code_blocks(response: str) -> List[str]:
-    """Extract code blocks using various methods."""
-    versions = []
-    
-    # Method 1: Try splitting by explicit separators
-    for separator in ['###', '---', '===', '\n\n\n']:
-        candidates = [v.strip() for v in response.split(separator) if v.strip()]
-        if len(candidates) >= 1:
-            versions = candidates
-            break
-    
-    # Method 2: If no luck with separators, try to identify code blocks by structure
-    if not versions:
-        # For Java files
-        if 'public class' in response or 'class' in response:
-            blocks = re.split(r'(?=public class|class\s+\w+)', response)
-            versions = [b.strip() for b in blocks if b.strip()]
-        
-        # For Python files
-        elif 'def ' in response:
-            blocks = re.split(r'(?=def\s+\w+)', response)
-            versions = [b.strip() for b in blocks if b.strip()]
-    
-    # Method 3: If still no versions, try to extract anything that looks like code
-    if not versions:
-        # Look for indented blocks
-        blocks = re.split(r'\n(?=\S)', response)
-        versions = [b.strip() for b in blocks if b.strip() and len(b.split('\n')) > 3]
-    
-    return versions
-
-def split_versions(response: str) -> List[str]:
-    """Enhanced version splitting with multiple fallback methods."""
-    try:
-        # Clean the response first
-        cleaned_response = sanitize_response(response)
-        
-        # Try to extract code blocks
-        versions = extract_code_blocks(cleaned_response)
-        
-        if not versions:
-            # If we still don't have versions, log the response for debugging
-            logging.error(f"Failed to extract versions from response: {cleaned_response[:200]}...")
-            raise ValueError("No valid versions found in response")
-        
-        # Ensure we have valid code in each version
-        valid_versions = []
-        for v in versions:
-            if len(v.split('\n')) > 3:  # Basic validation: more than 3 lines
-                valid_versions.append(v)
-        
-        if not valid_versions:
-            raise ValueError("No valid code blocks found in versions")
-        
-        return valid_versions[:5]
-        
-    except Exception as e:
-        logging.error(f"Error splitting versions: {str(e)}")
-        raise
-
-def generate_test_prompt(content: str, file_type: str, attempt: int = 0) -> str:
-    """Generate prompt with additional clarity for retry attempts."""
-    base_prompt = f"""Generate exactly 5 complete versions of the following {'Python' if file_type == 'py' else 'Java'} code.
-Each version should be the complete code with a different test case.
-
-Original code:
 {content}
 
-Requirements:
-1. Return exactly 5 complete versions of the code
-2. Each version must include ALL the original code
-3. Each version must have exactly ONE test case in the main {'block' if file_type == 'py' else 'method'}
-4. Separate each version with ### on a new line
-5. Do not add any explanations or comments between versions
-6. Do not use markdown formatting
+For this {category} implementation, check:
+"""
 
-Format:
-[Complete code version 1]
-###
-[Complete code version 2]
-###
-[Complete code version 3]
-###
-[Complete code version 4]
-###
-[Complete code version 5]"""
+    if category == "OOP":
+        base_prompt += """
+1. Are the majority of class methods being tested?
+2. Is the object-oriented structure (inheritance, encapsulation, etc.) being properly exercised?
+3. Is all testing code properly wrapped in the main method (except for method/class definitions)?
+4. Can this code be executed correctly with Python3/Java?
+5. Are there any syntax errors or runtime errors?
 
-    if attempt > 0:
-        base_prompt += "\n\nCRITICAL: Ensure each version is a complete, compilable code file. Separate versions ONLY with ### on a new line."
-    
+Provide a JSON response with these fields:
+{
+    "methods_tested": boolean,
+    "oop_structure_tested": boolean,
+    "main_method_correct": boolean,
+    "executable": boolean,
+    "errors": list of strings or empty list,
+    "suggestions": list of strings or empty list
+}"""
+
+    elif category == "Concurrency":
+        base_prompt += """
+1. Does the test actually invoke concurrent execution (threads/processes)?
+2. Is proper synchronization being tested?
+3. Is all testing code properly wrapped in the main method (except for thread/class definitions)?
+4. Can this code be executed correctly with Python3/Java?
+5. Are there any syntax errors or runtime errors?
+
+Provide a JSON response with these fields:
+{
+    "concurrent_execution": boolean,
+    "synchronization_tested": boolean,
+    "main_method_correct": boolean,
+    "executable": boolean,
+    "errors": list of strings or empty list,
+    "suggestions": list of strings or empty list
+}"""
+
     return base_prompt
 
-def process_file_pair(base_name: str, file_paths: Dict[str, str], base_dirs: List[str]) -> None:
-    """Process a pair of matching Python and Java files with enhanced error recovery."""
+def validate_test_file(file_path: str, category: str) -> Dict:
+    """Validate a single test file."""
     try:
-        for lang, src_path in file_paths.items():
-            if not src_path:
+        content = read_file_with_fallback(file_path)
+        file_type = 'py' if file_path.endswith('.py') else 'java'
+        
+        prompt = generate_validation_prompt(content, file_type, category)
+        response = prompt_gpt4o_with_backoff(prompt)
+        
+        try:
+            validation_result = json.loads(response)
+            return validation_result
+        except json.JSONDecodeError:
+            logging.error(f"Invalid JSON response for {file_path}")
+            return {
+                "executable": False,
+                "errors": ["Invalid response format from GPT"],
+                "suggestions": ["Please retry validation"]
+            }
+            
+    except Exception as e:
+        logging.error(f"Error validating {file_path}: {str(e)}")
+        return {
+            "executable": False,
+            "errors": [str(e)],
+            "suggestions": ["Error during validation"]
+        }
+
+def process_test_files(base_name: str, file_paths: Dict[str, List[str]], category: str) -> None:
+    """Process and validate test files for a given implementation."""
+    try:
+        for lang, files in file_paths.items():
+            if not files:
                 continue
+            
+            logging.info(f"Validating {len(files)} test files for {base_name} ({lang})")
+            
+            for file_path in files:
+                logging.info(f"Validating {file_path}")
+                validation_result = validate_test_file(file_path, category)
                 
-            file_type = 'py' if lang == 'Python' else 'java'
-            base_dir = next(bd for bd in base_dirs if bd in src_path)
-            dest_dir = os.path.join(f"{base_dir}_prepared", lang)
-            
-            os.makedirs(dest_dir, exist_ok=True)
-            missing_files = get_missing_files(src_path, dest_dir, file_type)
-            
-            if not missing_files:
-                logging.info(f"All test cases exist for {src_path}")
-                continue
+                # Log validation results
+                if validation_result.get("executable", False):
+                    if category == "OOP":
+                        if not validation_result.get("methods_tested", False):
+                            logging.warning(f"{file_path}: Not all methods are being tested")
+                        if not validation_result.get("oop_structure_tested", False):
+                            logging.warning(f"{file_path}: OOP structure not fully tested")
+                    elif category == "Concurrency":
+                        if not validation_result.get("concurrent_execution", False):
+                            logging.warning(f"{file_path}: No proper concurrent execution")
+                        if not validation_result.get("synchronization_tested", False):
+                            logging.warning(f"{file_path}: Synchronization not properly tested")
                 
-            logging.info(f"Generating {len(missing_files)} missing test cases for {src_path}")
-            
-            max_attempts = 3
-            success = False
-            
-            for attempt in range(max_attempts):
-                try:
-                    content = read_file_with_fallback(src_path)
-                    prompt = generate_test_prompt(content, file_type, attempt)
-                    
-                    response = prompt_gpt4o_with_backoff(prompt)
-                    versions = split_versions(response)
-                    
-                    if len(versions) < 5:
-                        # Pad with modified versions if needed
-                        base_version = versions[0]
-                        while len(versions) < 5:
-                            modified = modify_existing_version(base_version)
-                            versions.append(modified)
-                    
-                    # Write the files
-                    expected_files = get_expected_output_files(src_path, dest_dir, file_type)
-                    for output_file, version in zip(expected_files, versions):
-                        if output_file in missing_files:
-                            try:
-                                with open(output_file, 'w', encoding='utf-8') as file:
-                                    file.write(version)
-                                logging.info(f"Created test case file: {output_file}")
-                            except Exception as e:
-                                logging.error(f"Error writing {output_file}: {str(e)}")
-                                continue
-                    
-                    success = True
-                    break
-                    
-                except Exception as e:
-                    if attempt < max_attempts - 1:
-                        logging.warning(f"Attempt {attempt + 1} failed for {src_path}: {str(e)}. Retrying...")
-                        time.sleep(2 * (attempt + 1))  # Increasing delay between attempts
-                    else:
-                        logging.error(f"Failed to process {src_path} after {max_attempts} attempts: {str(e)}")
-            
-            if not success:
-                logging.error(f"Failed to generate test cases for {src_path}")
+                if validation_result.get("errors"):
+                    logging.error(f"Errors in {file_path}:")
+                    for error in validation_result["errors"]:
+                        logging.error(f"  - {error}")
+                
+                if validation_result.get("suggestions"):
+                    logging.info(f"Suggestions for {file_path}:")
+                    for suggestion in validation_result["suggestions"]:
+                        logging.info(f"  - {suggestion}")
                 
     except Exception as e:
-        logging.error(f"Error processing file pair {base_name}: {str(e)}")
+        logging.error(f"Error processing test files for {base_name}: {str(e)}")
 
 def main():
-    base_dirs = ['Recursion', 'Concurrency', 'OOP']
+    base_dirs = ['Concurrency', 'OOP']
     
-    # Find matching files across languages
-    matching_files = find_matching_files(base_dirs)
+    # Find all test files
+    test_files = find_test_files(base_dirs)
     
-    logging.info(f"Found {len(matching_files)} matching file pairs")
+    logging.info(f"Found {len(test_files)} implementations to validate")
     
-    # Process each pair of files
+    # Process each implementation's test files
     with ThreadPoolExecutor(max_workers=3) as executor:
         futures = []
-        for base_name, file_paths in matching_files.items():
-            futures.append(
-                executor.submit(process_file_pair, base_name, file_paths, base_dirs)
-            )
+        for base_name, file_paths in test_files.items():
+            # Determine category from directory
+            category = next((dir_name for dir_name in base_dirs if dir_name in file_paths['Python'][0] or dir_name in file_paths['Java'][0]), None)
+            if category:
+                futures.append(
+                    executor.submit(process_test_files, base_name, file_paths, category)
+                )
         
         # Wait for all tasks to complete
         for future in futures:
             try:
                 future.result()
             except Exception as e:
-                logging.error(f"Error in processing task: {str(e)}")
+                logging.error(f"Error in validation task: {str(e)}")
 
 if __name__ == "__main__":
     main()

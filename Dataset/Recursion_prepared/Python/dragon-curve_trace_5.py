@@ -39,4 +39,4 @@ def dcl(step, length):
 if __name__ == "__main__":
     speed(0)
     dragon(6, 120)
-    done()
+    bye()

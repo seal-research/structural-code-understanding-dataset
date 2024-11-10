@@ -45,15 +45,33 @@ class Account:
         return f"Account[id={self.id},name={self.name},balance={self.balance}]"
 
 
-class TestAccount:
-    @staticmethod
-    def main():
-        a1 = Account("A101", "Tan Ah Teck", 88)
-        a2 = Account("A102", "Kumar", 50)
-        a1.transfer_to(a2, 88)
-        print(a1)
-        print(a2)
-
 
 if __name__ == "__main__":
-    TestAccount.main()
+    # Create accounts
+        a1 = Account("A101", "Tan Ah Teck", 88)
+        a2 = Account("A102", "Kumar", 50)
+        a3 = Account("A103", "Rajesh", 1000)
+        a4 = Account("A104", "Siti", 300)
+        
+        # Credit some money to accounts
+        a1.credit(200)  # Tan Ah Teck credits 200
+        a2.credit(150)  # Kumar credits 150
+        a3.credit(500)  # Rajesh credits 500
+        
+        # Perform transfers
+        a1.transfer_to(a2, 50)  # Tan Ah Teck transfers 50 to Kumar
+        a2.transfer_to(a3, 100)  # Kumar transfers 100 to Rajesh
+        a4.transfer_to(a1, 250)  # Siti transfers 250 to Tan Ah Teck
+        a3.transfer_to(a4, 150)  # Rajesh transfers 150 to Siti
+        
+        # Perform some debits
+        a1.debit(100)  # Tan Ah Teck withdraws 100
+        a2.debit(200)  # Kumar tries to withdraw 200, should show an error
+        a3.debit(50)  # Rajesh withdraws 50
+        a4.debit(100)  # Siti withdraws 100
+        
+        # Print out the final states of the accounts
+        print(a1)
+        print(a2)
+        print(a3)
+        print(a4)

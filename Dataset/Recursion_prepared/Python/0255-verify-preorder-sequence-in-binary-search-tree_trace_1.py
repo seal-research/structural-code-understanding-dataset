@@ -1,6 +1,6 @@
 class Solution:
     def verifyPreorder(self, preorder: List[int]) -> bool:
-        min_limit = -inf
+        min_limit = -float("inf")
         stack = []
         
         for num in preorder:

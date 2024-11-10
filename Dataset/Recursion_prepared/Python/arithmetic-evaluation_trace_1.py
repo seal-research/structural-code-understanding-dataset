@@ -33,7 +33,7 @@ class Yaccer(object):
       opDict= { '+': ( operator.add, 2, 2 ),
          '-': (operator.sub, 2, 2 ),
          '*': (operator.mul, 3, 3 ),
-         '/': (operator.div, 3, 3 ),
+         '/': (operator.truediv, 3, 3 ),
          '^': ( pow,         4, 5 ),
          '(': ( openParen,   0, 8 )
          }
@@ -101,6 +101,7 @@ def Lex( exprssn, p ):
       bgn = None
    return p.end()
 
-expr = "3 + 5"
-astTree = Lex(expr, Yaccer())
-print(expr, '=', astTree.eval())
+if __name__ == '__main__':
+   expr = "3 + 5"
+   astTree = Lex(expr, Yaccer())
+   print(expr, '=', astTree.eval())

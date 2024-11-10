@@ -44,16 +44,23 @@ class Account:
     def __str__(self):
         return f"Account[id={self.id},name={self.name},balance={self.balance}]"
 
-
-class TestAccount:
-    @staticmethod
-    def main():
-        a1 = Account("A101", "Tan Ah Teck", 88)
-        a2 = Account("A102", "Kumar", 50)
-        a1.transfer_to(a2, 0)
-        print(a1)
-        print(a2)
-
-
 if __name__ == "__main__":
-    TestAccount.main()
+     # Create accounts
+    a1 = Account("A101", "Tan Ah Teck", 88)
+    a2 = Account("A102", "Kumar", 50)
+    a3 = Account("A103", "Rajesh", 1000)
+
+    # Credit money to accounts
+    a1.credit(200)  # Tan Ah Teck credits 200
+    a2.credit(150)  # Kumar credits 150
+    a3.credit(500)  # Rajesh credits 500
+
+    # Debit money from accounts
+    a1.debit(100)  # Tan Ah Teck withdraws 100
+    a2.debit(75)  # Kumar withdraws 75
+    a3.debit(300)  # Rajesh withdraws 300
+
+    # Perform a failed debit operation
+    a2.debit(200)  # Kumar tries to withdraw more than his balance, should show an error
+
+    # Print out the final states of the accounts

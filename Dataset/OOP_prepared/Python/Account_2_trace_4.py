@@ -82,6 +82,25 @@ class Account:
 
 
 if __name__ == "__main__":
-    account = Account(1, Customer(2, "Ha Gia Kinh", gender='m'), 10000.0)
-    account.withdraw(2000)
-    print(account)
+    # Create Customer and Account instances with discounts
+    customer1 = Customer(2, "Ha Gia Kinh", gender='m', discount=0.1)  # 10% discount
+    customer2 = Customer(3, "Nguyen Thao", gender='f', discount=0.05)  # 5% discount
+    customer3 = Customer(4, "Pham Tuong", gender='m', discount=0.2)  # 20% discount
+    
+    account1 = Account(1, customer1, 10000.0)
+    account2 = Account(2, customer2, 5000.0)
+    account3 = Account(3, customer3, 2000.0)
+    
+    # Withdraw from one account and deposit into another, applying discount
+    amount_to_transfer = 1000
+    account1.withdraw(amount_to_transfer)  # Withdraw from account1
+    account2.deposit(amount_to_transfer * (1 - customer2.getDiscount()))  # Deposit into account2 with discount
+    
+    # Perform more transactions
+    account3.withdraw(500)
+    account2.deposit(1500)
+    
+    # Print out the final states of the accounts
+    print(account1)
+    print(account2)
+    print(account3)

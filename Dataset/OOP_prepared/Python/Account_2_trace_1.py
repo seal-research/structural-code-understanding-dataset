@@ -84,4 +84,3 @@ class Account:
 if __name__ == "__main__":
     account = Account(1, Customer(2, "Ha Gia Kinh", gender='m'), 10000.0)
     account.withdraw(5000)
-    print(account)

@@ -45,15 +45,9 @@ class Account:
         return f"Account[id={self.id},name={self.name},balance={self.balance}]"
 
 
-class TestAccount:
-    @staticmethod
-    def main():
-        a1 = Account("A101", "Tan Ah Teck", 88)
-        a2 = Account("A102", "Kumar", 50)
-        a1.transfer_to(a2, 20)
-        print(a1)
-        print(a2)
-
-
 if __name__ == "__main__":
-    TestAccount.main()
+    a1 = Account("A101", "Tan Ah Teck", 88)
+    a2 = Account("A102", "Kumar", 50)
+    a1.transfer_to(a2, 20)
+    print(a1)
+    print(a2)
