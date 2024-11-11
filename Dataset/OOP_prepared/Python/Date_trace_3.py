@@ -40,12 +40,6 @@ class Date:
         new_string = date.strftime("%d/%m/%Y")
         return new_string
 
-
-class TestDate:
-    @staticmethod
-    def main():
-        d1 = Date(31, 12, 1999)
-        print(d1)
-
 if __name__ == "__main__":
-    TestDate.main()
+    d2 = Date(29, 2, 2021)
+    print(d2)

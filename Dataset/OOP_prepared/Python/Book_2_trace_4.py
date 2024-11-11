@@ -72,5 +72,8 @@ class Book:
 
 
 if __name__ == "__main__":
-    book = Book("JavaScript Essentials", [Author("Eve Blue", "eve@example.com", 'f'), Author("Frank Red", "frank@example.com", 'm')], 100.0, 10)
-    print(book.get_author_names())
+    author4 = Author("Lucy Green", "lucy@example.com", 'f')
+    book3 = Book("Data Science Essentials", [author4], 99.99, 20)
+    book3.set_name("Data Science Mastery")
+    print(book3)
+    print(book3.get_author_names())

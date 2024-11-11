@@ -84,10 +84,8 @@ class Student(Person):
         return f"Student[{super().__str__()}, program={self._program}, year={self._year}, fee={self._fee}]"
 
 
-def main():
-    s1 = Student("Jane Smith", "Los Angeles", "BIO202", 2024, 600)
-    print(s1)
-
-
 if __name__ == "__main__":
-    main()
+    p2 = Person("Bob", "456 Elm St")
+    p2.name = "Robert"
+    p2.address = "789 Oak St"
+    print(p2)

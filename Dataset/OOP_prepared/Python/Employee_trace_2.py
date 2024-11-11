@@ -45,4 +45,5 @@ class Employee:
 
 if __name__ == "__main__":
     e2 = Employee(2, "Jane", "Smith", 4000)
-    print(e2.raise_salary(15))
+    print(e2.get_name())
+    print(e2.get_annual_salary())

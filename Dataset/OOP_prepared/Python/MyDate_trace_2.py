@@ -87,5 +87,4 @@ class TestMyDate:
         return weeks.index(day_of_week)
 
 if __name__ == "__main__":
-    d = MyDate(2022, 12, 31)
-    print(d.next_day())
+    d = TestMyDate.get_day_of_week(2022, 12, 31)

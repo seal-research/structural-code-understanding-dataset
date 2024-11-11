@@ -41,10 +41,8 @@ class Cat(Animal):
     def greeting(self):
         print("Meow!")
 
-def main():
-    dog1 = Dog()
-    dog2 = Dog()
-    dog1.greeting_dog(dog2)
-
 if __name__ == "__main__":
-    main()
+    try:
+        animal = Animal()
+    except TypeError as e:
+        print(e)

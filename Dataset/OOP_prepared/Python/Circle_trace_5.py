@@ -21,11 +21,9 @@ class Circle:
     def __str__(self):
         return f"Circle[radius={self._radius}]"
 
-class TestCircle:
-    @staticmethod
-    def main():
-        c = Circle(15.3)
-        print(f"area is: {c.get_area():.2f}")
 
 if __name__ == "__main__":
-    TestCircle.main()
+    circle4 = Circle(2.5)
+    print(f"Area of circle4: {circle4.get_area():.2f}, Circumference of circle4: {circle4.get_circumference():.2f}")
+    circle4.radius = 4.0
+    print(f"Updated Area of circle4: {circle4.get_area():.2f}, Updated Circumference of circle4: {circle4.get_circumference():.2f}")

@@ -61,12 +61,7 @@ class Time:
             print(f"Error parsing time: {ex}")
             return ""
         return time.strftime("%H:%M:%S")
-
-class TestTime:
-    @staticmethod
-    def main():
-        t1 = Time(12, 30, 45)
-        print(t1.next_second())
-
+        
 if __name__ == "__main__":
-    TestTime.main()
+    t1 = Time(12, 30, 45)
+    print(t1.next_second())

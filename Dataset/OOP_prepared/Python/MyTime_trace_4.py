@@ -70,13 +70,7 @@ class MyTime:
             self.previous_minute()
         return self
 
-class TestMyTime:
-    @staticmethod
-    def main():
-        my_time = MyTime(23, 59, 58)
-        print(my_time)
-        my_time.next_second()
-        print(my_time)
-
 if __name__ == "__main__":
-    TestMyTime.main()
+    t4 = MyTime(0, 0, 0)
+    t4.previous_second()
+    print(t4)

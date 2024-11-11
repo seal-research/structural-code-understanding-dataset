@@ -78,13 +78,8 @@ class MyComplex:
         self.imag *= -1
         return self
 
-class TestMyComplex:
-    @staticmethod
-    def main():
-        c1 = MyComplex(11, 12)
-        c2 = MyComplex(5, 6)
-        c1.add(c2)
-        print(c1)
-
 if __name__ == "__main__":
-    TestMyComplex.main()
+    c9 = MyComplex(1, 2)
+    c10 = MyComplex(3, 4)
+    result = c9.multiply(c10)
+    print(f"Test 5 - Multiply: {result}")

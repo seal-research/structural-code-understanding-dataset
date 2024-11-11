@@ -37,5 +37,8 @@ class InvoiceItem:
 
 
 if __name__ == "__main__":
-    inv1 = InvoiceItem("C303", "Eraser", 200, 0.25)
-    print("The total is:", inv1.get_total())
+    inv2 = InvoiceItem("A102", "Pencil", 200, 0.25)
+    inv2.set_qty(250)
+    print(inv2.get_qty())
+    print(inv2.get_total())
+    print(inv2)

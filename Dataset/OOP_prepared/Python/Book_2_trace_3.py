@@ -72,5 +72,9 @@ class Book:
 
 
 if __name__ == "__main__":
-    book = Book("C++ Guide", [Author("Charlie Green", "charlie@example.com", 'm'), Author("Diana Black", "diana@example.com", 'f')], 180.0, 25)
-    print(book.get_author_names())
+    author3 = Author("Sam Lee", "sam@example.com", 'm')
+    book2 = Book("Advanced Python", [author3], 79.99, 5)
+    book2.set_price(69.99)
+    book2.set_qty(8)
+    print(book2)
+    print(book2.get_author_names())

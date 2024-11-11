@@ -56,5 +56,8 @@ class Rectangle(GeometricObject):
         return (self.width + self.length) * 2
 
 if __name__ == "__main__":
-    c = Circle(10)
-    print("Area:", c.get_area())
+    c2 = Circle()
+    c2.set_radius(5.5)
+    print(c2.get_radius())
+    print(c2.get_area())
+    print(c2)

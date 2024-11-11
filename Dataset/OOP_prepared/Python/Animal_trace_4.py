@@ -46,6 +46,6 @@ class Cat(Animal):
 
 
 if __name__ == "__main__":
-    d1 = Dog("Oscar")
-    bD1 = BigDog("Titan")
-    bD1.greets_dog(d1)
+    c1 = Cat("Whiskers")
+    print(f"Cat's name: {c1.name}")
+    c1.greets()                     

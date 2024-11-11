@@ -44,5 +44,7 @@ class Employee:
 
 
 if __name__ == "__main__":
-    e5 = Employee(5, "Charlie", "Davis", 7000)
-    print(e5.raise_salary(30))
+    e1 = Employee(1, "John", "Doe", 3000)
+    print(e1.get_name())
+    print(e1.get_salary())
+    print(e1)

@@ -93,5 +93,8 @@ class Square(Rectangle):
 
 
 if __name__ == "__main__":
-    c4 = Circle(20)
-    print(c4.get_area())
+    s2 = Square(5, color="green", filled=False)
+    s2.set_color("yellow")
+    print(s2.get_area())
+    print(s2.get_color())
+    print(s2)

@@ -127,16 +127,11 @@ class Container:
         return f"Container[({self.x1},{self.y1}),({self.x2},{self.y2})]"
 
 
-class TestContainer:
-    @staticmethod
-    def main():
-        ball = Ball(10, 10, 5, speed=20, direction=60)
-        box = Container(0, 0, 30, 30)
-        for step in range(10):
+
+if __name__ == "__main__":
+    ball = Ball(10, 10, 5, speed=20, direction=60)
+    box = Container(0, 0, 30, 30)
+    for step in range(10):
             ball.move()
             box.collidesWith(ball)
             print(ball)
-
-
-if __name__ == "__main__":
-    TestContainer.main()

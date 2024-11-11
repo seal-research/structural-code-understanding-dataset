@@ -40,5 +40,7 @@ class Dog(Mammal):
 
 
 if __name__ == "__main__":
-    d1 = Dog("Charlie")
-    print(d1)
+    animal = Animal()
+    print(animal)
+    animal_with_name = Animal("Some Animal")
+    print(animal_with_name)

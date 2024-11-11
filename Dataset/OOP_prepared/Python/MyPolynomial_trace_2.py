@@ -59,15 +59,8 @@ class MyPolynomial:
 
         return MyPolynomial(*ans)
 
-
-class TestMyPolynomial:
-    @staticmethod
-    def main():
-        p1 = MyPolynomial(2.0, 4.0, 6.0)
-        p2 = MyPolynomial(1.0, 3.0, 5.0, 7.0)
-        p3 = MyPolynomial(0.1, 0.2, 0.3)
-        print(p2.add(p3))
-
-
 if __name__ == "__main__":
-    TestMyPolynomial.main()
+    p2 = MyPolynomial(1.0, 0.0, 5.0, 0.0)
+    p2.set_coeffs([0.0, 3.0, 0.0, 2.0])
+    print(p2.get_coeffs())
+    print(p2)

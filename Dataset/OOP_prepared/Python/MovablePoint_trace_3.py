@@ -69,5 +69,5 @@ class MovablePoint(Point):
 
 
 if __name__ == "__main__":
-    m = MovablePoint(5, 5, 3, 3)
-    print(m.move())
+    m1 = MovablePoint(2.0, 3.0, 1.0, 1.0)
+    print(m1.getSpeed())

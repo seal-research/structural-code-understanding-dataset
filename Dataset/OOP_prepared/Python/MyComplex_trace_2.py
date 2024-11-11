@@ -78,13 +78,10 @@ class MyComplex:
         self.imag *= -1
         return self
 
-class TestMyComplex:
-    @staticmethod
-    def main():
-        c1 = MyComplex(5, 6)
-        c2 = MyComplex(2, 3)
-        c1.add(c2)
-        print(c1)
-
 if __name__ == "__main__":
-    TestMyComplex.main()
+    c3 = MyComplex(0, 5)
+    c4 = MyComplex(0, 0)
+    print(f"Test 2 - Is imaginary (c3): {c3.is_imaginary()}")
+    print(f"Test 2 - Is real (c4): {c4.is_real()}")
+    print(f"Test 2 - Equals (c3): {c3.equals(0, 5)}")
+    print(f"Test 2 - Equals complex (c4): {c4.equals_complex(c4)}")

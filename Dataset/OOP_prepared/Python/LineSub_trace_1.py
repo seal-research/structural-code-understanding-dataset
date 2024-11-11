@@ -87,13 +87,8 @@ class LineSub(Point):
     def get_gradient(self):
         return math.atan2(self._end.get_y() - self.get_y(), self._end.get_x() - self.get_x())
 
-
-class TestLineSub:
-    @staticmethod
-    def main():
-        line_sub = LineSub(3, 4, 0, 0)
-        print(line_sub.get_length())
-
-
 if __name__ == "__main__":
-    TestLineSub.main()
+    p1 = Point(1, 2)
+    print(p1.get_x())
+    print(p1.get_y())
+    print(p1)

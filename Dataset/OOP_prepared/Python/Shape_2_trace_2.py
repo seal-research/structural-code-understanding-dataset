@@ -93,5 +93,7 @@ class Square(Rectangle):
 
 
 if __name__ == "__main__":
-    c2 = Circle(10)
-    print(c2.get_area())
+    r1 = Rectangle(3, 7)
+    print(r1.get_area())
+    print(r1.get_perimeter())
+    print(r1)

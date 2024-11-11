@@ -67,6 +67,10 @@ class Invoice:
 
 
 if __name__ == "__main__":
-    c4 = Customer(4, "Bob Brown", 30)
-    inv4 = Invoice(204, c4, 1200.0)
-    print(f"amount after discount is: {inv4.get_amount_after_discount():.2f}")
+    c4 = Customer(4, "David Green", 50)
+    inv4 = Invoice(104, c4, 2000)
+    inv4.set_customer(Customer(5, "Eve Black", 15))
+    inv4.get_customer().set_name("Eva Black")
+    print(inv4.get_customer_name())
+    print(inv4.get_amount_after_discount())
+    print(inv4)

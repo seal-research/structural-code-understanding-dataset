@@ -89,12 +89,8 @@ class MyCircle:
         return f"MyCircle[radius={self.radius},center={self.center}]"
 
 
-class TestMyCircle:
-    @staticmethod
-    def main():
-        my_circle = MyCircle(MyPoint(7, 8), 2)
-        print(my_circle.distance(MyCircle(MyPoint(10, 12), 3)))
-
-
 if __name__ == "__main__":
-    TestMyCircle.main()
+    circle1 = MyCircle(MyPoint(0, 0), 5)
+    print(circle1.get_center_x())
+    print(circle1.get_center_y())
+    print(circle1.get_area())

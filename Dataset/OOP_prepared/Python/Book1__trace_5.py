@@ -68,5 +68,8 @@ class Book:
 
 
 if __name__ == "__main__":
-    book = Book("Ruby", Author("Bob Brown", "bob.brown@example.com", 'm'), 18.75, 12)
-    print(book)
+    author4 = Author("Dana White", "dana.white@example.com", 'f')
+    book4 = Book("Machine Learning", author4, 50.0, 20)
+    book4.set_qty(25)
+    book4.set_price(45.0)
+    print(book4)

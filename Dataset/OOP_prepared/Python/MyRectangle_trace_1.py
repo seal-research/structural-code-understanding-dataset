@@ -118,12 +118,6 @@ class MyRectangle:
         return f"MyRectangle[topLeft={self.top_left},bottomRight={self.bottom_right}]"
 
 
-class TestMyRectangle:
-    @staticmethod
-    def main():
-        my_rectangle = MyRectangle(MyPoint(1, 5), MyPoint(6, 1))
-        print(my_rectangle.get_area())
-
-
 if __name__ == "__main__":
-    TestMyRectangle.main()
+    my_rectangle = MyRectangle(MyPoint(1, 5), MyPoint(6, 1))
+    print(my_rectangle.get_area())

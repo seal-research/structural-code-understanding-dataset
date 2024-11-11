@@ -103,12 +103,6 @@ class MyLine:
         return f"MyLine[begin={self.begin}, end={self.end}]"
 
 
-class TestMyLine:
-    @staticmethod
-    def main():
-        my_line = MyLine(begin=MyPoint(1, 2), end=MyPoint(4, 6))
-        print(my_line.get_length())
-
-
 if __name__ == "__main__":
-    TestMyLine.main()
+    my_line = MyLine(begin=MyPoint(1, 2), end=MyPoint(4, 6))
+    print(my_line.get_length())

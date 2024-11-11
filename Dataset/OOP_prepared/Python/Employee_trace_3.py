@@ -44,5 +44,6 @@ class Employee:
 
 
 if __name__ == "__main__":
-    e3 = Employee(3, "Alice", "Johnson", 5000)
-    print(e3.raise_salary(20))
+    e3 = Employee(3, "Alice", "Brown", 5000)
+    print(e3.raise_salary(10))
+    print(e3)

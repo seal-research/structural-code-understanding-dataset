@@ -83,12 +83,10 @@ class MyTriangle:
         return f"MyTriangle[v1={self.v1},v2={self.v2},v3={self.v3}]"
 
 
-class TestMyTriangle:
-    @staticmethod
-    def main():
-        my_triangle = MyTriangle(MyPoint(1, 1), MyPoint(4, 1), MyPoint(1, 5))
-        print(my_triangle.get_perimeter())
-
-
 if __name__ == "__main__":
-    TestMyTriangle.main()
+    p2 = MyPoint(0, 0)
+    p2.set_x(5)
+    p2.set_y(12)
+    print(p2.get_x())
+    print(p2.get_y())
+    print(p2.distance())

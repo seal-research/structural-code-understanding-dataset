@@ -65,4 +65,76 @@ class Ball:
         self.yDelta = -self.yDelta
 
     def __str__(self):
-        return f"Ball[({self.x},{self.y}),speed=({self.xDelta},{self.y
+        return f"Ball[({self.x},{self.y}),speed=({self.xDelta},{self.yDelta})]"
+
+
+class Container:
+    def __init__(self, x1, y1, width, height):
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x1 + width - 1
+        self.y2 = y1 + height - 1
+
+    def getX1(self):
+        return self.x1
+
+    def setX1(self, x1):
+        self.x1 = x1
+
+    def getY1(self):
+        return self.y1
+
+    def setY1(self, y1):
+        self.y1 = y1
+
+    def getX2(self):
+        return self.x2
+
+    def setX2(self, x2):
+        self.x2 = x2
+
+    def getY2(self):
+        return self.y2
+
+    def setY2(self, y2):
+        self.y2 = y2
+
+    def getX(self):
+        return self.x1
+
+    def getY(self):
+        return self.y1
+
+    def getWidth(self):
+        return self.x2 - self.x1 + 1
+
+    def getHeight(self):
+        return self.y2 - self.y1 + 1
+
+    def collides(self, ball):
+        if ball.getX() - ball.getRadius() <= self.x1 or ball.getX() - ball.getRadius() >= self.x2:
+            ball.reflectHorizontal()
+            return True
+        return False
+
+    def collidesWith(self, ball):
+        if ball.getX() - ball.getRadius() <= self.x1 or ball.getX() - ball.getRadius() >= self.x2:
+            ball.reflectHorizontal()
+            return True
+        return False
+
+    def __str__(self):
+        return f"Container[({self.x1},{self.y1}),({self.x2},{self.y2})]"
+    
+
+if __name__ == '__main__':
+    ball = Ball(10, 10, 3, speed=10, direction=45)
+    container = Container(0, 0, 20, 20)
+    
+    # Move the ball 5 steps and check its reflection when it hits the container
+    for step in range(5):
+        ball.move()
+        if container.collidesWith(ball):
+            print(f"Ball collided and reflected at step {step}: {ball}")
+        else:
+            print(f"Ball moved to {ball} without collision at step {step}")

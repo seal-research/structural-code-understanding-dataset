@@ -111,4 +111,5 @@ class TestMyLine:
 
 
 if __name__ == "__main__":
-    TestMyLine.main()
+    line1 = MyLine(1, 2, 3, 4)
+    print(line1.get_length())

@@ -65,7 +65,9 @@ class Book:
 
 
 if __name__ == "__main__":
-    a1 = Author("Tan Ah Teck", "ahteck@nowhere.com")
-    b1 = Book("12345", "Java for dummies", a1, 8.8, 88)
-    b1.set_price(30.0)
-    print(b1)
+    author4 = Author("Bob White", "bob@example.com")
+    book3 = Book("978-0-12-345678-9", "Machine Learning Advanced", author4, 59.99, 20)
+    book3.set_name("Machine Learning Essentials")
+    book3.set_isbn("978-0-12-345679-6")
+    print(book3)
+    print(book3.get_isbn())

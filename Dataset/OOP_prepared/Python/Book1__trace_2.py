@@ -68,5 +68,6 @@ class Book:
 
 
 if __name__ == "__main__":
-    book = Book("Java", Author("John Doe", "john.doe@example.com", 'm'), 15.0, 10)
-    print(book)
+    author1 = Author("Alice Johnson", "alice.johnson@example.com", 'f')
+    book1 = Book("Python Programming", author1, 20.0, 5)
+    print(book1)

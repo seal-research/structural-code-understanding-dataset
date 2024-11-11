@@ -71,12 +71,7 @@ class MovablePoint(Movable):
     def move_right(self):
         self._x += self._x_speed
 
-class TestMain:
-    @staticmethod
-    def main():
-        point = MovablePoint(5, 5, 2, 3)
-        point.move_up()
-        print(point)
-
 if __name__ == "__main__":
-    TestMain.main()
+    point = MovablePoint(5, 5, 2, 3)
+    point.move_up()
+    print(point)

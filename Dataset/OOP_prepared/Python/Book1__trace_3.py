@@ -68,5 +68,7 @@ class Book:
 
 
 if __name__ == "__main__":
-    book = Book("C++", Author("Jane Smith", "jane.smith@example.com", 'f'), 25.5, 5)
-    print(book)
+    author2 = Author("Bob Smith", "bob.smith@example.com", 'm')
+    book2 = Book("Advanced Python", author2, 25.0, 3)
+    book2.set_qty(8)
+    print(book2)

@@ -92,4 +92,7 @@ class TestMain:
 
 
 if __name__ == "__main__":
-    TestMain.main()
+    c1 = Circle(5)
+    print(c1)
+    print("Area:", c1.get_area())
+    print("Perimeter:", c1.get_perimeter())

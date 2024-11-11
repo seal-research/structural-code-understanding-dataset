@@ -79,4 +79,8 @@ class TestMyTime:
         print(my_time)
 
 if __name__ == "__main__":
-    TestMyTime.main()
+    t5 = MyTime(5, 5, 5)
+    t5.next_hour()
+    t5.previous_minute()
+    t5.next_second()
+    print(t5)

@@ -104,8 +104,3 @@ if __name__ == "__main__":
     # Perform more transactions
     account2.deposit(1000)
     account3.withdraw(1000)
-    
-    # Print out the final states of the accounts
-    print(account1)
-    print(account2)
-    print(account3)

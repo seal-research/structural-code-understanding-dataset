@@ -88,12 +88,11 @@ class LineSub(Point):
         return math.atan2(self._end.get_y() - self.get_y(), self._end.get_x() - self.get_x())
 
 
-class TestLineSub:
-    @staticmethod
-    def main():
-        line_sub = LineSub(1, 1, 4, 5)
-        print(line_sub.get_length())
-
 
 if __name__ == "__main__":
-    TestLineSub.main()
+    line2 = LineSub(2, 3, 5, 6)
+    print(line2.get_begin_x())
+    print(line2.get_begin_y())
+    print(line2.get_end_x())
+    print(line2.get_end_y())
+    print(line2)

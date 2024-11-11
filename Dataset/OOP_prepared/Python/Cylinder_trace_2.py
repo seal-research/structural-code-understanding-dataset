@@ -48,12 +48,11 @@ class Cylinder(Circle):
         return f"Cylinder: subclass of {super().__str__()} height={self._height}"
 
 
-class TestCylinder:
-    @staticmethod
-    def main():
-        c2 = Cylinder(7.0, 2.0)
-        print(f"Cylinder: radius={c2.radius} height={c2.height} base area={c2.get_area()} volume={c2.get_volume()}")
-
 
 if __name__ == "__main__":
-    TestCylinder.main()
+    circle2 = Circle(3.0, "green")
+    circle2.radius = 6.0
+    print(circle2)
+    print(f"Area of circle2: {circle2.get_area()}")
+    c2 = Cylinder(7.0, 2.0)
+    print(f"Cylinder: radius={c2.radius} height={c2.height} base area={c2.get_area()} volume={c2.get_volume()}")

@@ -55,6 +55,6 @@ class Point3D(Point2D):
 
 
 if __name__ == "__main__":
-    p1 = Point3D(4, 5, 6)
-    p1.set_xyz(15, 16, 17)
-    print(p1)
+    p2 = Point2D(3, 7)
+    p2.set_xy(6, 9)
+    print(p2.get_xy())

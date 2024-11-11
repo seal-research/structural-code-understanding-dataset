@@ -6,7 +6,4 @@ class TestBigInteger:
         print(i1 + i2)
 
 if __name__ == "__main__":
-    i1 = int("0")
-    i2 = int("0")
-    print(i1 + i2)
     TestBigInteger.main()

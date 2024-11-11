@@ -89,3 +89,5 @@ class TestMyDate:
 if __name__ == "__main__":
     d = MyDate(2023, 2, 28)
     print(d.next_day())
+    d.next_day()
+    d.next_year()

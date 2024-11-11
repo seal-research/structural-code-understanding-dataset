@@ -102,13 +102,10 @@ class MovableRectangle(Movable):
         self.bottom_right.set_x(self.bottom_right.get_x() + self.bottom_right.get_x_speed())
 
 
-class TestMain:
-    @staticmethod
-    def main():
-        rectangle = MovableRectangle(MovablePoint(0, 0, 1, 1), MovablePoint(2, 2, 1, 1))
-        rectangle.move_up()
-        print(rectangle)
-
-
 if __name__ == "__main__":
-    TestMain.main()
+    point3 = MovablePoint(0, 0, 3, 3)
+    point3.move_up()
+    point3.move_left()
+    point3.set_x(10)
+    point3.set_y(20)
+    print(point3)

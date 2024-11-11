@@ -56,13 +56,7 @@ class Player:
         ball.set_y(ball.get_y() + random.randint(0, 19))
         ball.set_z(ball.get_z() + random.randint(0, 4))
 
-class TestPlayer:
-    @staticmethod
-    def main():
-        ball = Ball(5, 5, 5)
-        player = Player(2, 5, 5, 5)
-        player.kick(ball)
-        print(ball)
-
 if __name__ == "__main__":
-    TestPlayer.main()
+    player1 = Player(1, 2, 2, 2)
+    player1.move(3, 4)
+    print(player1.x, player1.y)

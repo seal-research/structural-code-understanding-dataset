@@ -25,12 +25,8 @@ class Rectangle:
         return f"Rectangle[length={self.length}, width={self.width}]"
 
 
-class TestRectangle:
-    @staticmethod
-    def main():
-        r = Rectangle(3.3, 5.5)
-        print(f"area is: {r.get_area():.2f}")
-
-
 if __name__ == "__main__":
-    TestRectangle.main()
+    r2 = Rectangle()
+    r2.set_length(6.0)
+    r2.set_width(8.0)
+    print(r2.get_perimeter())

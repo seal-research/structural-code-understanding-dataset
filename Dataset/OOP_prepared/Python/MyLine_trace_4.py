@@ -102,13 +102,8 @@ class MyLine:
     def __str__(self):
         return f"MyLine[begin={self.begin}, end={self.end}]"
 
-
-class TestMyLine:
-    @staticmethod
-    def main():
-        my_line = MyLine(begin=MyPoint(4, 5), end=MyPoint(7, 9))
-        print(my_line.get_length())
-
-
 if __name__ == "__main__":
-    TestMyLine.main()
+    point3 = MyPoint(1, 1)
+    point4 = MyPoint(4, 5)
+    line2 = MyLine(begin=point3, end=point4)
+    print(line2.get_gradient())

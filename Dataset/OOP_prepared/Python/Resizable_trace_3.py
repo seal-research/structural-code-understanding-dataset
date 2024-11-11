@@ -46,26 +46,18 @@ class ResizableCircle(Circle, Resizable):
     def resize(self, percent):
         self._radius *= percent / 100
 
-class TestMain:
-    @staticmethod
-    def main():
-        g1 = Circle(1.2)
-        print(g1)
-        print(f"Perimeter = {g1.get_perimeter()}")
-        print(f"Area = {g1.get_area()}")
-
-        g2 = ResizableCircle(3.4)
-        print(g2)
-        g2.resize(56)
-        print(g2)
-
-        g3 = g2  # In Python, no need to cast explicitly
-        print(g3)
-        print(f"Perimeter = {g3.get_perimeter()}")
-        print(f"Area = {g3.get_area()}")
-
 if __name__ == "__main__":
-    g1 = Circle(5.9)
+    g1 = Circle(1.2)
     print(g1)
     print(f"Perimeter = {g1.get_perimeter()}")
     print(f"Area = {g1.get_area()}")
+
+    g2 = ResizableCircle(3.4)
+    print(g2)
+    g2.resize(56)
+    print(g2)
+
+    g3 = g2  # In Python, no need to cast explicitly
+    print(g3)
+    print(f"Perimeter = {g3.get_perimeter()}")
+    print(f"Area = {g3.get_area()}")

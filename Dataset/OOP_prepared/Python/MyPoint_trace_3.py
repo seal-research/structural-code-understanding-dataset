@@ -36,5 +36,6 @@ class MyPoint:
         return f"({self.x},{self.y})"
 
 if __name__ == "__main__":
-    p1 = MyPoint(5, 5)
-    print(p1.distance())
+    p3 = MyPoint(1, 1)
+    p4 = MyPoint(4, 5)
+    print(p3.distance(another=p4))

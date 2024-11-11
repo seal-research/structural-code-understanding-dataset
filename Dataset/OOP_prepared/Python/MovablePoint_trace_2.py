@@ -69,5 +69,6 @@ class MovablePoint(Point):
 
 
 if __name__ == "__main__":
-    m = MovablePoint(3, 3, 1, 1)
-    print(m.move())
+    p2 = Point()
+    p2.setXY(3.0, 4.0)
+    print(p2)

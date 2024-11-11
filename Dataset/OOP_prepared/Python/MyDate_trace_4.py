@@ -87,5 +87,4 @@ class TestMyDate:
         return weeks.index(day_of_week)
 
 if __name__ == "__main__":
-    d = MyDate(2021, 1, 31)
-    print(d.next_day())
+    d = TestMyDate.is_leap_year(2021)

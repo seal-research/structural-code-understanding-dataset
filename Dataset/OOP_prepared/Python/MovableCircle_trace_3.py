@@ -102,7 +102,8 @@ class MovableCircle(Movable):
 
 
 if __name__ == "__main__":
-    m1 = MovablePoint(30, 40, 8, 2)
-    print(m1)
-    m1.move_left()
-    print(m1)
+    m3 = MovableCircle(radius=5, center=MovablePoint(0, 0, 1, 1))
+    print(m3)
+    m3.move_left()
+    m3.move_down()
+    print(m3)

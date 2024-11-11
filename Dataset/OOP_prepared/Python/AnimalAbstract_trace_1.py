@@ -41,10 +41,7 @@ class Cat(Animal):
     def greeting(self):
         print("Meow!")
 
-def main():
+if __name__ == "__main__":
     dog1 = Dog()
     bigDog1 = BigDog()
     dog1.greeting_dog(bigDog1)
-
-if __name__ == "__main__":
-    main()

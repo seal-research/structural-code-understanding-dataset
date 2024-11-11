@@ -60,14 +60,8 @@ class MyPolynomial:
         return MyPolynomial(*ans)
 
 
-class TestMyPolynomial:
-    @staticmethod
-    def main():
-        p1 = MyPolynomial(0.1, 0.2, 0.3)
-        p2 = MyPolynomial(0.4, 0.5, 0.6, 0.7)
-        p3 = MyPolynomial(0.8, 0.9, 1.0)
-        print(p1.add(p2))
-
-
 if __name__ == "__main__":
-    TestMyPolynomial.main()
+    p6 = MyPolynomial(3.0, 0.0, -2.0)
+    p7 = MyPolynomial(1.0, 1.0)
+    print(p6.multiply(p7))
+    print(p7)

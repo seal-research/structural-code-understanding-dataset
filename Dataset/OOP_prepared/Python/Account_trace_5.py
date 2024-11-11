@@ -45,15 +45,35 @@ class Account:
         return f"Account[id={self.id},name={self.name},balance={self.balance}]"
 
 
-class TestAccount:
-    @staticmethod
-    def main():
-        a1 = Account("A101", "Tan Ah Teck", 88)
-        a2 = Account("A102", "Kumar", 50)
-        a1.transfer_to(a2, 1)
-        print(a1)
-        print(a2)
-
-
+# Expanded test cases
 if __name__ == "__main__":
-    TestAccount.main()
+    # Create two accounts
+    a1 = Account("A101", "Tan Ah Teck", 88)
+    a2 = Account("A102", "Kumar", 50)
+
+    # Test credit method
+    a1.credit(20)
+
+    # Test debit method within balance
+    a1.debit(30)
+
+    # Test debit method exceeding balance
+    a1.debit(100)  # Expected output: Amount exceeded balance
+
+    # Test transfer_to method within balance
+    a1.transfer_to(a2, 10)
+
+    # Test transfer_to method exceeding balance
+    a1.transfer_to(a2, 100)  # Expected output: Amount exceeded balance
+
+    # Test setting and getting account ID
+    a1.set_id("A105")
+    a1.get_id()
+
+    # Test setting and getting account name
+    a1.set_name("John Doe")
+    a1.get_name()
+
+    # Test setting and getting balance
+    a1.set_balance(200)
+    a1.get_balance() 

@@ -50,11 +50,9 @@ class Ball:
         return f"Ball[({self.x},{self.y}),speed=({self.xDelta},{self.yDelta})]"
 
 
-def main():
-    ball = Ball(20.0, 20.0, 5, 4.0, 4.0)
-    ball.move()
-    print(ball)
-
-
 if __name__ == "__main__":
-    main()
+     # Test 1
+    ball1 = Ball(0.0, 0.0, 3, 2.0, 3.0)
+    print(ball1)
+    ball1.move()
+    print(ball1)

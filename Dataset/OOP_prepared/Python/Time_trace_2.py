@@ -62,11 +62,7 @@ class Time:
             return ""
         return time.strftime("%H:%M:%S")
 
-class TestTime:
-    @staticmethod
-    def main():
-        t1 = Time(23, 59, 59)
-        print(t1.next_second())
-
 if __name__ == "__main__":
-    TestTime.main()
+    t2 = Time(23, 59, 59)
+    print(t2.next_second())
+    print(t2.previous_second())

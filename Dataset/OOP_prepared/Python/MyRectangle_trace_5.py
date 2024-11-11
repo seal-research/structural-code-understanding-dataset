@@ -41,4 +41,85 @@ class MyRectangle:
         if top_left is not None and bottom_right is not None:
             self.top_left = top_left
             self.bottom_right = bottom_right
-        elif x1 is not None and y1 is not None and x2 is not None and y2 is not None
+        elif x1 is not None and y1 is not None and x2 is not None and y2 is not None:
+            self.top_left = MyPoint(x1, y1)
+            self.bottom_right = MyPoint(x2, y2)
+        else:
+            self.top_left = MyPoint()
+            self.bottom_right = MyPoint()
+
+    def get_top_left(self):
+        return self.top_left
+
+    def set_top_left(self, top_left):
+        self.top_left = top_left
+
+    def get_bottom_right(self):
+        return self.bottom_right
+
+    def set_bottom_right(self, bottom_right):
+        self.bottom_right = bottom_right
+
+    def set_top_left_x(self, x):
+        self.top_left.set_x(x)
+
+    def get_top_left_x(self):
+        return self.top_left.get_x()
+
+    def set_top_left_y(self, y):
+        self.top_left.set_y(y)
+
+    def get_top_left_y(self):
+        return self.top_left.get_y()
+
+    def set_top_left_xy(self, x, y):
+        self.top_left.set_xy(x, y)
+
+    def get_top_left_xy(self):
+        return [self.top_left.get_x(), self.top_left.get_y()]
+
+    def set_bottom_right_x(self, x):
+        self.bottom_right.set_x(x)
+
+    def get_bottom_right_x(self):
+        return self.bottom_right.get_x()
+
+    def set_bottom_right_y(self, y):
+        self.bottom_right.set_y(y)
+
+    def get_bottom_right_y(self):
+        return self.bottom_right.get_y()
+
+    def set_bottom_right_xy(self, x, y):
+        self.bottom_right.set_xy(x, y)
+
+    def get_bottom_right_xy(self):
+        return [self.bottom_right.get_x(), self.bottom_right.get_y()]
+
+    def get_bottom_left(self):
+        return MyPoint(self.top_left.get_x(), self.bottom_right.get_y())
+
+    def get_top_right(self):
+        return MyPoint(self.bottom_right.get_x(), self.top_left.get_y())
+
+    def get_diagonal(self):
+        return self.top_left.distance(another=self.bottom_right)
+
+    def get_full_point(self):
+        return f"MyRectangle[topLeft={self.top_left},bottomLeft={self.get_bottom_left()},bottomRight={self.bottom_right},topRight={self.get_top_right()}]"
+
+    def get_area(self):
+        return int(self.top_left.distance(another=self.get_top_right()) * self.bottom_right.distance(another=self.get_top_right()))
+
+    def get_perimeter(self):
+        return int((self.top_left.distance(another=self.get_top_right()) + self.bottom_right.distance(another=self.get_top_right())) * 2)
+
+    def __str__(self):
+        return f"MyRectangle[topLeft={self.top_left},bottomRight={self.bottom_right}]"
+    
+if __name__ == '__main__':
+    rect3 = MyRectangle()
+    rect3.set_top_left_xy(2, 3)
+    rect3.set_bottom_right_xy(6, 1)
+    print(rect3.get_area())
+    print(rect3.get_perimeter())

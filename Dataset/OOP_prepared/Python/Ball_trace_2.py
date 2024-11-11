@@ -49,12 +49,10 @@ class Ball:
     def __str__(self):
         return f"Ball[({self.x},{self.y}),speed=({self.xDelta},{self.yDelta})]"
 
-
-def main():
+if __name__ == "__main__":
     ball = Ball(5.0, 5.0, 2, 1.0, 1.0)
     ball.move()
     print(ball)
-
-
-if __name__ == "__main__":
-    main()
+    ball.reflectHorizontal()
+    ball.reflectVertical()
+    ball.move()

@@ -46,7 +46,8 @@ class Cat(Animal):
 
 
 if __name__ == "__main__":
-    d1 = Dog("Rocky")
-    d2 = Dog("Duke")
-    bD1 = BigDog("Bruno")
-    bD1.greets_dog(d2)
+    a = Animal("Generic Animal")
+    try:
+        a.greets()
+    except NotImplementedError as e:
+        print(e)  

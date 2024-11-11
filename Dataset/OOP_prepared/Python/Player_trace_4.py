@@ -65,4 +65,6 @@ class TestPlayer:
         print(ball)
 
 if __name__ == "__main__":
-    TestPlayer.main()
+    ball2 = Ball(10, 10, 10)
+    player3 = Player(3, 6, 6, 6)
+    print(player3.near(ball2))

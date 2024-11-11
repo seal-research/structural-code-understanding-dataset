@@ -72,5 +72,8 @@ class Book:
 
 
 if __name__ == "__main__":
-    book = Book("Ruby on Rails", [Author("George Yellow", "george@example.com", 'm'), Author("Hannah Pink", "hannah@example.com", 'f')], 130.0, 5)
-    print(book.get_author_names())
+    author5 = Author("Alice Brown", "alice@example.com", 'f')
+    author6 = Author("Bob White", "bob@example.com", 'm')
+    book4 = Book("Java Programming", [author5, author6], 120.0, 15)
+    print(book4)
+    print(book4.get_author_names())

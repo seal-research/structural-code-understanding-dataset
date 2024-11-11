@@ -41,11 +41,7 @@ class Date:
         return new_string
 
 
-class TestDate:
-    @staticmethod
-    def main():
-        d1 = Date(1, 1, 2000)
-        print(d1)
-
 if __name__ == "__main__":
-    TestDate.main()
+    d3 = Date(15, 8, 2000)
+    d3.set_date(1, 1, 1999)
+    print(d3)

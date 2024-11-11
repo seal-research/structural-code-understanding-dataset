@@ -42,3 +42,5 @@ class Dog(Mammal):
 if __name__ == "__main__":
     c1 = Cat("Luna")
     print(c1)
+    mammal1 = Mammal("Generic Mammal")
+    print(mammal1)

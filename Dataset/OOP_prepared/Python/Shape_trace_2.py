@@ -82,14 +82,8 @@ class Square(Rectangle):
         return f"Square[{super().__str__()}]"
 
 
-class TestMain:
-    @staticmethod
-    def main():
-        c2 = Circle(10, "blue", False)
-        print(c2)
-        print("Area:", c2.get_area())
-        print("Perimeter:", c2.get_perimeter())
-
-
 if __name__ == "__main__":
-    TestMain.main()
+    r1 = Rectangle(4, 6, "green", True)
+    print(r1)
+    print("Area:", r1.get_area())
+    print("Perimeter:", r1.get_perimeter())

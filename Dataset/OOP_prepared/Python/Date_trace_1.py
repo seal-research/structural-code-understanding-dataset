@@ -41,11 +41,6 @@ class Date:
         return new_string
 
 
-class TestDate:
-    @staticmethod
-    def main():
-        d1 = Date(15, 8, 2021)
-        print(d1)
-
 if __name__ == "__main__":
-    TestDate.main()
+    d1 = Date(15, 8, 2021)
+    print(d1)
