@@ -1,6 +1,3 @@
-from threading import Semaphore
-import collections
-
 class BoundedBlockingQueue:
   def __init__(self, capacity: int):
     self.q = collections.deque()

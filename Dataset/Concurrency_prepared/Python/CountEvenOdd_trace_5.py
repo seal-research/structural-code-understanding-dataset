@@ -1,6 +1,3 @@
-import threading
-
-# Function to count even numbers
 def count_even(numbers, result):
     count = sum(1 for num in numbers if num % 2 == 0)
     result.append(count)
@@ -13,17 +10,26 @@ def count_odd(numbers, result):
     print(f"Count of odd numbers: {count}")
 
 if __name__ == "__main__":
-    numbers = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+    numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     result = []
 
     even_thread = threading.Thread(target=count_even, args=(numbers, result))
     odd_thread = threading.Thread(target=count_odd, args=(numbers, result))
+    even_thread2 = threading.Thread(target=count_even, args=(numbers, result))
+    odd_thread2 = threading.Thread(target=count_odd, args=(numbers, result))
 
     even_thread.start()
+    #START
     odd_thread.start()
+    even_thread2.start()
+    odd_thread2.start()
 
     even_thread.join()
     odd_thread.join()
+    even_thread2.join()
+    odd_thread2.join()
+    #END
+
 
     total_even, total_odd = result
     print(f"Total even: {total_even}, Total odd: {total_odd}")

@@ -1,6 +1,3 @@
-from threading import Semaphore
-import threading
-
 class FooBar:
   def __init__(self, n):
     self.n = n
@@ -31,6 +28,7 @@ if __name__ == "__main__":
   thread1 = threading.Thread(target=foobar.foo, args=(printFoo,))
   thread2 = threading.Thread(target=foobar.bar, args=(printBar,))
   thread1.start()
+  #START
   thread2.start()
   thread1.join()
   thread2.join()

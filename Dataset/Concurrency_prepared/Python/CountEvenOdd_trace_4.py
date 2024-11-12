@@ -13,17 +13,26 @@ def count_odd(numbers, result):
     print(f"Count of odd numbers: {count}")
 
 if __name__ == "__main__":
-    numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     result = []
 
     even_thread = threading.Thread(target=count_even, args=(numbers, result))
     odd_thread = threading.Thread(target=count_odd, args=(numbers, result))
+    even_thread2 = threading.Thread(target=count_even, args=(numbers, result))
+    odd_thread2 = threading.Thread(target=count_odd, args=(numbers, result))
 
     even_thread.start()
+    #START
     odd_thread.start()
+    even_thread2.start()
+    odd_thread2.start()
 
     even_thread.join()
     odd_thread.join()
+    even_thread2.join()
+    odd_thread2.join()
+    #END
+
 
     total_even, total_odd = result
     print(f"Total even: {total_even}, Total odd: {total_odd}")

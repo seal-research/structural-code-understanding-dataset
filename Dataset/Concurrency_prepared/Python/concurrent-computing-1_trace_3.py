@@ -1,5 +1,3 @@
-import asyncio
-
 async def print_(string: str) -> None:
     print(string)
 

@@ -28,10 +28,10 @@ class Solution:
         threads = []
         num_threads = 10  # Or any number you deem appropriate based on the problem constraints
 
-        # Start threads
         for _ in range(num_threads):
             thread = Thread(target=worker)
             thread.start()
+            #START
             threads.append(thread)
 
         # Wait for all threads to finish

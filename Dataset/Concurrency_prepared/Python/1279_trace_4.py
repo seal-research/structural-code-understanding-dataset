@@ -21,11 +21,23 @@ class TrafficLight:
     crossCar()
 
 if __name__ == "__main__":
-  def turnGreen():
-    print("Light turned green")
+    def turnGreen():
+        print("Light turned green")
 
-  def crossCar():
-    print("Car crossed")
+    def crossCar():
+        print("Car crossed")
 
-  traffic_light = TrafficLight()
-  traffic_light.carArrived(4, 2, 3, turnGreen, crossCar)
+    traffic_light = TrafficLight()
+
+    thread1 = Thread(target=traffic_light.carArrived, args=(4, 2, 3, turnGreen, crossCar))
+    thread2 = Thread(target=traffic_light.carArrived, args=(5, 1, 2, turnGreen, crossCar))
+    thread3 = Thread(target=traffic_light.carArrived, args=(6, 2, 1, turnGreen, crossCar))
+
+    thread1.start()
+    #START
+    thread2.start()
+    thread3.start()
+
+    thread1.join()
+    thread2.join()
+    thread3.join()

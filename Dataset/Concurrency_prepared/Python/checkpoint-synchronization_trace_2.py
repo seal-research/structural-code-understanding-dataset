@@ -1,8 +1,3 @@
-import threading
-import time
-import random
-
-
 def worker(workernum, barrier):
     # task 1
     sleeptime = random.random()
@@ -16,21 +11,13 @@ def worker(workernum, barrier):
     time.sleep(sleeptime)
     print('Exiting worker'+str(workernum))
 
-barrier = threading.Barrier(3)
-
-w1 = threading.Thread(target=worker, args=((1,barrier)))
-w2 = threading.Thread(target=worker, args=((2,barrier)))
-w3 = threading.Thread(target=worker, args(((3,barrier)))
-
-w1.start()
-w2.start()
-w3.start()
 
 if __name__ == "__main__":
     barrier = threading.Barrier(3)
     w1 = threading.Thread(target=worker, args=((4,barrier)))
-    w2 = threading.Thread(target=worker, args((5,barrier)))
-    w3 = threading.Thread(target=worker, args((6,barrier)))
+    w2 = threading.Thread(target=worker, args=((5,barrier)))
+    w3 = threading.Thread(target=worker, args=((6,barrier)))
     w1.start()
+    #START
     w2.start()
     w3.start()

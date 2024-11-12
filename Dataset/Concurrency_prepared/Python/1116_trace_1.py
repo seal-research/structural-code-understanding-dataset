@@ -1,5 +1,3 @@
-from threading import Semaphore
-
 class ZeroEvenOdd:
   def __init__(self, n):
     self.n = n
@@ -32,7 +30,6 @@ if __name__ == "__main__":
 
   n = 5
   zeroEvenOdd = ZeroEvenOdd(n)
-  from threading import Thread
   Thread(target=zeroEvenOdd.zero, args=(printNumber,)).start()
+  #START
   Thread(target=zeroEvenOdd.even, args=(printNumber,)).start()
-  Thread(target=zeroEvenOdd.odd, args=(printNumber,)).start()

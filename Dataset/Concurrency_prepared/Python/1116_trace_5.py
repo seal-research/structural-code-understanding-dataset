@@ -30,9 +30,10 @@ if __name__ == "__main__":
   def printNumber(x):
     print(x, end='')
 
-  n = 1
+  n = 15
   zeroEvenOdd = ZeroEvenOdd(n)
-  from threading import Thread
   Thread(target=zeroEvenOdd.zero, args=(printNumber,)).start()
+  #START
   Thread(target=zeroEvenOdd.even, args=(printNumber,)).start()
+  Thread(target=zeroEvenOdd.odd, args=(printNumber,)).start()
   Thread(target=zeroEvenOdd.odd, args=(printNumber,)).start()

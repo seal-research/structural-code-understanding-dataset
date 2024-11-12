@@ -1,6 +1,3 @@
-from threading import Semaphore
-
-
 class FizzBuzz:
   def __init__(self, n: int):
     self.n = n
@@ -49,8 +46,6 @@ class FizzBuzz:
 
 
 if __name__ == "__main__":
-  import threading
-
   def printFizz():
     print("fizz", end=' ')
 
@@ -63,7 +58,7 @@ if __name__ == "__main__":
   def printNumber(x):
     print(x, end=' ')
 
-  n = 30
+  n = 15
   fizzbuzz = FizzBuzz(n)
 
   threads = [
@@ -75,5 +70,6 @@ if __name__ == "__main__":
 
   for t in threads:
     t.start()
+    #START
   for t in threads:
     t.join()

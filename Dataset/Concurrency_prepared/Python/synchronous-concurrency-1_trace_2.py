@@ -1,7 +1,3 @@
-import sys
-from Queue import Queue
-from threading import Thread
-
 lines = Queue(1)
 count = Queue(1)
 
@@ -11,7 +7,7 @@ def read(file):
             lines.put(line)
     finally:
         lines.put(None)
-    print count.get()
+    print(count.get())
 
 def write(file):
     n = 0
@@ -23,21 +19,16 @@ def write(file):
         n += 1
     count.put(n)
 
-reader = Thread(target=read, args=(open('input.txt'),))
-writer = Thread(target=write, args=(sys.stdout,))
-reader.start()
-writer.start()
-reader.join()
-writer.join()
-
 if __name__ == "__main__":
     import io
-    input_file = io.StringIO("Another test line\n")
-    output_file = io.StringIO()
+    input_file = io.StringIO("line1\n\line2\nAnother test line\n")
+    output_file = sys.stdout
     reader = Thread(target=read, args=(input_file,))
     writer = Thread(target=write, args=(output_file,))
     reader.start()
+    #START
     writer.start()
     reader.join()
     writer.join()
+    #STOP
     print(output_file.getvalue())

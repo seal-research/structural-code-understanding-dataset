@@ -23,3 +23,5 @@ class Foo:
 if __name__ == "__main__":
   foo = Foo()
   foo.first(lambda: print("First"))
+  foo.second(lambda: print("Second"))
+  foo.third(lambda: print("Third"))

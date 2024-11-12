@@ -28,11 +28,15 @@ class Integrator(Thread):
         Thread.join(self)
 
 if __name__ == "__main__":
-    from math import sqrt
-
+    #START
     ai = Integrator(lambda t: sqrt(t))
-    sleep(2)
+    sleep(1)
     print(ai.S)
-    ai.K = lambda t: 0
+
+    ai.K = lambda t: sqrt(t * 2)
+    sleep(1.5)
+    print(ai.S)
+
+    ai.K = lambda t: 0 
     sleep(0.5)
     print(ai.S)

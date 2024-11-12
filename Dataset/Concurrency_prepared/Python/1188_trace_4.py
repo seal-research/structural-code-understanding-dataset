@@ -1,6 +1,3 @@
-from threading import Semaphore
-import collections
-
 class BoundedBlockingQueue:
   def __init__(self, capacity: int):
     self.q = collections.deque()
@@ -22,6 +19,23 @@ class BoundedBlockingQueue:
     return len(self.q)
 
 if __name__ == "__main__":
-  queue = BoundedBlockingQueue(3)
-  queue.enqueue(4)
-  print(queue.size())
+    queue = BoundedBlockingQueue(3)
+
+    def enqueue_elements():
+        queue.enqueue(1)
+        queue.enqueue(2)
+        queue.enqueue(3)
+
+    def dequeue_elements():
+        print(queue.dequeue())  # Expected output: 1, then 2, then 3
+
+    t1 = Thread(target=enqueue_elements)
+    t2 = Thread(target=dequeue_elements)
+    t3 = Thread(target=enqueue_elements)
+    t1.start()
+    #START
+    t2.start()
+    t3.start()
+    t1.join()
+    t2.join()
+    t3.join()

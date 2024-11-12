@@ -33,12 +33,13 @@ if __name__ == "__main__":
     h2o = H2O()
 
     threads = []
-    for _ in range(10):
+    for _ in range(6):
         threads.append(threading.Thread(target=h2o.hydrogen, args=(releaseHydrogen,)))
-    for _ in range(5):
+    for _ in range(1):
         threads.append(threading.Thread(target=h2o.oxygen, args=(releaseOxygen,)))
 
     for t in threads:
         t.start()
+        #START
     for t in threads:
         t.join()

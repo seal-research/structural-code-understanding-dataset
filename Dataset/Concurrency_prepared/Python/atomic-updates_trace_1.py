@@ -1,8 +1,3 @@
-from __future__ import with_statement # required for Python 2.5
-import threading
-import random
-import time
-
 terminate = threading.Event()
 
 class Buckets:
@@ -47,33 +42,36 @@ def equalize(buckets):
 def print_state(buckets):
     snapshot = buckets.snapshot()
     for value in snapshot:
-        print '%2d' % value,
-    print '=', sum(snapshot)
-
-# create 15 buckets
-buckets = Buckets(15)
-
-# the randomize thread
-t1 = threading.Thread(target=randomize, args=[buckets])
-t1.start()
-
-# the equalize thread
-t2 = threading.Thread(target=equalize, args=[buckets])
-t2.start()
-
-# main thread, display
-try:
-    while True:
-        print_state(buckets)
-        time.sleep(1)
-except KeyboardInterrupt: # ^C to finish
-    terminate.set()
-
-# wait until all worker threads finish
-t1.join()
-t2.join()
+        print(f'{value:2d}', end=' ')  # Using f-string for formatting
+    print('=', sum(snapshot))
 
 if __name__ == "__main__":
-    buckets = Buckets(15)
-    buckets.transfer(0, 1, 5)
-    print_state(buckets)
+    # create 5 buckets
+    buckets = Buckets(5)
+
+    # Create a threading event for termination signal
+    terminate = threading.Event()
+
+    t1 = threading.Thread(target=randomize, args=[buckets])
+    t1.start()
+    # START
+
+    # the equalize thread
+    t2 = threading.Thread(target=equalize, args=[buckets])
+    t2.start()
+
+    # main thread, display
+    max_steps = 10  # Define the number of steps (iterations)
+    current_step = 0
+
+    try:
+        while current_step < max_steps:
+            print_state(buckets)
+            time.sleep(1)
+            current_step += 1
+    except KeyboardInterrupt:  # ^C to finish
+        terminate.set()
+
+    # Wait until all worker threads finish
+    t1.join()
+    t2.join()

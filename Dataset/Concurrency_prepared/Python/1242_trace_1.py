@@ -1,7 +1,3 @@
-from threading import Thread, Lock
-from urllib.parse import urlparse  # To parse URLs and extract hostname for comparison
-from typing import List
-
 class Solution:
     def crawl(self, startUrl: str, htmlParser: 'HtmlParser') -> List[str]:
         hostname = urlparse(startUrl).hostname
@@ -28,10 +24,10 @@ class Solution:
         threads = []
         num_threads = 10  # Or any number you deem appropriate based on the problem constraints
 
-        # Start threads
         for _ in range(num_threads):
             thread = Thread(target=worker)
             thread.start()
+            #START
             threads.append(thread)
 
         # Wait for all threads to finish

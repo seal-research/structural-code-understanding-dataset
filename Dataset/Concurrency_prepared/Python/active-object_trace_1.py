@@ -28,8 +28,7 @@ class Integrator(Thread):
         Thread.join(self)
 
 if __name__ == "__main__":
-    from math import cos, pi
-
+    #START
     ai = Integrator(lambda t: cos(pi*t))
     sleep(2)
     print(ai.S)

@@ -21,5 +21,24 @@ class Foo:
     printThird()
 
 if __name__ == "__main__":
-  foo = Foo()
-  foo.second(lambda: print("Second Test"))
+    def run_foo_instance(foo_instance):
+        foo_instance.first(lambda: print("First"))
+        foo_instance.second(lambda: print("Second"))
+        foo_instance.third(lambda: print("Third"))
+    
+    foo1 = Foo()
+    foo2 = Foo()
+    foo3 = Foo()
+
+    t1 = Thread(target=run_foo_instance, args=(foo1,))
+    t2 = Thread(target=run_foo_instance, args=(foo2,))
+    t3 = Thread(target=run_foo_instance, args=(foo3,))
+
+    t1.start()
+    #START
+    t2.start()
+    t3.start()
+
+    t1.join()
+    t2.join()
+    t3.join()

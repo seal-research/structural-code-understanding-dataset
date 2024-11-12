@@ -28,11 +28,15 @@ class Integrator(Thread):
         Thread.join(self)
 
 if __name__ == "__main__":
-    from math import tan, pi
 
-    ai = Integrator(lambda t: tan(pi*t/4))
-    sleep(2)
+    ai = Integrator(lambda t: tan(pi * t / 4))  # Use tan(pi*t/4) for more varied behavior
+    sleep(1)  # Shorter sleep for more frequent changes
     print(ai.S)
-    ai.K = lambda t: 0
-    sleep(0.5)
+    
+    ai.K = lambda t: tan(pi * t / 2)  # Change the function to tan(pi*t/2)
+    sleep(1.5)  # Longer sleep for more varied integration progress
+    print(ai.S)
+    
+    ai.K = lambda t: 0  # Stop integration (function is now zero)
+    sleep(0.5)  # Short sleep before printing the final result
     print(ai.S)
