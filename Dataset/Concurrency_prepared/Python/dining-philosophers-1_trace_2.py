@@ -39,10 +39,12 @@ class Philosopher(threading.Thread):
 if __name__ == "__main__":
     philosopherNames = ('Aristotle','Kant','Spinoza')
     forks = [threading.Lock() for n in range(len(philosopherNames))]
-    philosophers = [Philosopher(philosopherNames[i], forks[i%5], forks[(i+1)%5]) for i in range(5)]
+    philosophers = [Philosopher(philosopherNames[i], forks[i % len(philosopherNames)], forks[(i + 1) % len(philosopherNames)]) for i in range(len(philosopherNames))]
     random.seed(507129)
     Philosopher.running = True
-    for p in philosophers: p.start()
-    time.sleep(20)
-    Philosopher.running = False
+    for p in philosophers: p.start() #START
+
+    time.sleep(26)
+    Philosopher.running = False #END
+
     print ("Test 2 finished.")

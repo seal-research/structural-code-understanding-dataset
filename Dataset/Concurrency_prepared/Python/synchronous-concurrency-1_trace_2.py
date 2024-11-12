@@ -25,8 +25,8 @@ if __name__ == "__main__":
     output_file = sys.stdout
     reader = Thread(target=read, args=(input_file,))
     writer = Thread(target=write, args=(output_file,))
-    reader.start()
-    #START
+    reader.start() #START
+
     writer.start()
     reader.join()
     writer.join()

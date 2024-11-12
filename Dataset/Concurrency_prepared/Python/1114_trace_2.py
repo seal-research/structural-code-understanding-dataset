@@ -29,14 +29,13 @@ if __name__ == "__main__":
   
   def run_third():
       foo.third(lambda: print("Third"))
-  
-  #START
+
   t1 = Thread(target=run_first)
   t2 = Thread(target=run_second)
   t3 = Thread(target=run_third)
+ 
+  t1.start() #START
 
-  t1.start()
-  #START
   t2.start()
   t3.start()
 

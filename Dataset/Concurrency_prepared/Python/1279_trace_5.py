@@ -33,8 +33,8 @@ if __name__ == "__main__":
     thread2 = Thread(target=traffic_light.carArrived, args=(2, 2, 2, turnGreen, crossCar))
     thread3 = Thread(target=traffic_light.carArrived, args=(3, 3, 3, turnGreen, crossCar))
 
-    thread1.start()
-    #START
+    thread1.start() #START
+
     thread2.start()
     thread3.start()
 

@@ -31,8 +31,8 @@ if __name__ == "__main__":
 
     t1 = Thread(target=enqueue_elements)
     t2 = Thread(target=dequeue_elements)
-    t1.start()
-    #START
+    t1.start() #START
+
     t2.start()
     t1.join()
     t2.join()

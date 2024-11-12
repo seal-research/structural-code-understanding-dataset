@@ -33,7 +33,15 @@ if __name__ == "__main__":
   n = 7
   zeroEvenOdd = ZeroEvenOdd(n)
 
-  Thread(target=zeroEvenOdd.zero, args=(printNumber,)).start()
-  #START
-  Thread(target=zeroEvenOdd.even, args=(printNumber,)).start()
-  Thread(target=zeroEvenOdd.odd, args=(printNumber,)).start()
+  t1 = Thread(target=zeroEvenOdd.zero, args=(printNumber,))
+  t2 = Thread(target=zeroEvenOdd.even, args=(printNumber,))
+  t3 = Thread(target=zeroEvenOdd.odd, args=(printNumber,))
+
+  t1.start() #START
+
+  t2.start()
+  t3.start()
+
+  t1.join()
+  t2.join()
+  t3.join()

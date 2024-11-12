@@ -36,8 +36,8 @@ if __name__ == "__main__":
   t2 = Thread(target=run_second)
   t3 = Thread(target=run_third)
 
-  t1.start()
-  #START
+  t1.start() #START
+
   t3.start()
   t2.start()
 

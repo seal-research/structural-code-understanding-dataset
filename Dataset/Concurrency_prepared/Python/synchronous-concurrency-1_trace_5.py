@@ -24,10 +24,10 @@ if __name__ == "__main__":
     output_file = io.StringIO()
     reader = Thread(target=read, args=(input_file,))
     writer = Thread(target=write, args=(output_file,))
-    reader.start()
-    #START
+    reader.start() #START
+
     writer.start()
     reader.join()
-    writer.join()
-    #END
+    writer.join() #END
+
     print(output_file.getvalue())

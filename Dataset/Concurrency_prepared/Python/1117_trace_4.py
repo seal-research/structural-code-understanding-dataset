@@ -1,6 +1,3 @@
-from threading import Semaphore
-
-
 class H2O:
     def __init__(self):
         self.h = Semaphore(2)
@@ -21,9 +18,6 @@ class H2O:
 
 
 if __name__ == "__main__":
-    import threading
-    import time
-
     def releaseHydrogen():
         print("H", end="")
 
@@ -39,7 +33,8 @@ if __name__ == "__main__":
         threads.append(threading.Thread(target=h2o.oxygen, args=(releaseOxygen,)))
 
     for t in threads:
-        t.start()
-        #START
+        t.start() #START
+
+
     for t in threads:
         t.join()

@@ -61,9 +61,9 @@ async def main():
                 print("\t Mother Goose out of ink!")
                 break
 
-    await asyncio.gather(print_goose(), print_humpty())
+    await asyncio.gather(print_goose(), print_humpty()) #START
+
 
 
 if __name__ == "__main__":
     asyncio.run(main(), debug=True)
-    #START

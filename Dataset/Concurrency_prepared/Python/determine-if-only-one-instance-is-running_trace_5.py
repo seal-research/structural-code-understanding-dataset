@@ -18,8 +18,8 @@ if __name__ == "__main__":
 
     # Start a background thread to periodically check for other instances
     checker_thread = threading.Thread(target=check_instance_periodically, args=(steps, interval))
-    checker_thread.start()
-    #START
+    checker_thread.start() #START
+
 
     checker_thread2 = threading.Thread(target=check_instance_periodically, args=(steps, interval))
     checker_thread2.start()
@@ -30,6 +30,6 @@ if __name__ == "__main__":
         time.sleep(interval)
 
     checker_thread.join()
-    checker_thread2.join()
-    #END
+    checker_thread2.join() #END
+
     print("Main program completed.")

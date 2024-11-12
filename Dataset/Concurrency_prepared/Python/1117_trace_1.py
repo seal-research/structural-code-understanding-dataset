@@ -18,7 +18,6 @@ class H2O:
 
 
 if __name__ == "__main__":
-
     def releaseHydrogen():
         print("H", end="")
 
@@ -33,7 +32,8 @@ if __name__ == "__main__":
     threads.append(threading.Thread(target=h2o.oxygen, args=(releaseOxygen,)))
 
     for t in threads:
-        t.start()
-        #START
+        t.start() #START
+
+
     for t in threads:
         t.join()

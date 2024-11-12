@@ -32,8 +32,8 @@ if __name__ == "__main__":
     thread1 = Thread(target=traffic_light.carArrived, args=(1, 1, 0, turnGreen, crossCar))
     thread2 = Thread(target=traffic_light.carArrived, args=(2, 2, 1, turnGreen, crossCar))
 
-    thread1.start()
-    #START
+    thread1.start() #START
+
     thread2.start()
 
     thread1.join()

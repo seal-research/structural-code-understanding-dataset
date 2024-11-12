@@ -22,20 +22,30 @@ if __name__ == "__main__":
     queue = BoundedBlockingQueue(3)
 
     def enqueue_elements():
-        queue.enqueue(1)
-        queue.enqueue(2)
-        queue.enqueue(3)
+        for i in range(1, 4):
+            print(f"Enqueueing: {i}")
+            queue.enqueue(i)
 
     def dequeue_elements():
-        print(queue.dequeue())  # Expected output: 1, then 2, then 3
+        print(f"Dequeued: {queue.dequeue()}")
+        print(f"Dequeued: {queue.dequeue()}")
+        print(f"Dequeued: {queue.dequeue()}")
 
+    # Create threads
     t1 = Thread(target=enqueue_elements)
     t2 = Thread(target=dequeue_elements)
     t3 = Thread(target=enqueue_elements)
-    t1.start()
-    #START
+
+    t1.start() #START
+
+
     t2.start()
     t3.start()
+
+    # Wait for all threads to finish
     t1.join()
     t2.join()
-    t3.join()
+    t3.join() #END
+
+    
+    print("All threads have finished.")

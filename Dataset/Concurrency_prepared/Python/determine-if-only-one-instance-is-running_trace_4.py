@@ -18,13 +18,14 @@ if __name__ == "__main__":
 
     # Start a background thread to periodically check for other instances
     checker_thread = threading.Thread(target=check_instance_periodically, args=(steps, interval))
-    checker_thread.start()
-    #START
+    checker_thread.start() #START
+
 
     # Main thread can perform other tasks concurrently for the same number of steps
     for i in range(steps):
         print("Main thread doing other work... Step", i+1)
         time.sleep(interval)
 
-    checker_thread.join()  # Wait for checker thread to finish
+    checker_thread.join() #END
+
     print("Main program completed.")

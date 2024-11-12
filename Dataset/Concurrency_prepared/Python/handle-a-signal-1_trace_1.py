@@ -10,5 +10,6 @@ def counter(max_steps=10):
 if __name__ == "__main__":
     max_steps = 5  # Set the desired number of steps
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        future = executor.submit(counter, max_steps=max_steps)
+        future = executor.submit(counter, max_steps=max_steps) #START
+
         future.result()  # Wait for the counter to complete

@@ -17,15 +17,15 @@ if __name__ == "__main__":
     odd_thread = threading.Thread(target=count_odd, args=(numbers, result))
     even_thread2 = threading.Thread(target=count_even, args=(numbers, result))
 
-    even_thread.start()
-    #START
+    even_thread.start() #START
+
     odd_thread.start()
     even_thread2.start()
 
     even_thread.join()
     odd_thread.join()
-    even_thread2.join()
-    #END
+    even_thread2.join() #END
 
-    total_even, total_odd = result
+
+    total_even, total_odd, _ = result
     print(f"Total even: {total_even}, Total odd: {total_odd}")

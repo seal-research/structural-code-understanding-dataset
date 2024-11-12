@@ -13,8 +13,12 @@ def worker(workernum, barrier):
 
 if __name__ == "__main__":
     barrier = threading.Barrier(3)
-    w1 = threading.Thread(target=worker, args=((1,barrier)))
-    w2 = threading.Thread(target=worker, args=((2,barrier)))
-    w1.start()
-    #START
+    w1 = threading.Thread(target=worker, args=(1,barrier))
+    w2 = threading.Thread(target=worker, args=(2,barrier))
+    w3 = threading.Thread(target=worker, args=(3,barrier))
+    w1.start() #START
     w2.start()
+    w3.start()
+    w1.join()
+    w2.join()
+    w3.join()

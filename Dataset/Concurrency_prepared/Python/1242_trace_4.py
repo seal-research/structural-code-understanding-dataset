@@ -1,41 +1,51 @@
 class Solution:
     def crawl(self, startUrl: str, htmlParser: 'HtmlParser') -> List[str]:
         hostname = urlparse(startUrl).hostname
-        seen = set([startUrl])  # Keep track of seen URLs to avoid re-crawling the same URL
-        lock = Lock()  # Lock for thread-safe operations on the seen set
-
-        def dfs(url):
-            for next_url in htmlParser.getUrls(url):
-                if urlparse(next_url).hostname == hostname and next_url not in seen:
-                    with lock:  # Ensure thread-safe write to the seen set
-                        if next_url not in seen:
-                            seen.add(next_url)
-                            dfs(next_url)
+        seen = set([startUrl])
+        lock = Lock()
+        unseen = Queue()
+        unseen.put(startUrl)
 
         def worker():
             while True:
-                with lock:
-                    if not unseen:
-                        return
-                    url = unseen.pop()
-                dfs(url)
+                url = unseen.get()  # Get URL from queue
+                if url is None:
+                    break
+                
+                # Get all URLs from current page
+                for next_url in htmlParser.getUrls(url):
+                    # Check hostname and if URL was seen
+                    if urlparse(next_url).hostname == hostname:
+                        with lock:
+                            if next_url not in seen:
+                                seen.add(next_url)
+                                unseen.put(next_url)
+                
+                unseen.task_done()
 
-        unseen = [startUrl]  # Stack of URLs to be crawled
         threads = []
-        num_threads = 10  # Or any number you deem appropriate based on the problem constraints
-
-        # Start threads
+        num_threads = 10 #START
+        
+        # Start worker threads
         for _ in range(num_threads):
             thread = Thread(target=worker)
-            thread.start()
-            #START
-            threads.append(thread)
+            thread.daemon = True  # Set as daemon thread
+            thread.start() #START
 
+            threads.append(thread)
+        
+        # Wait for the queue to be empty
+        unseen.join()
+        
+        # Stop workers
+        for _ in range(num_threads):
+            unseen.put(None)
+            
         # Wait for all threads to finish
         for thread in threads:
             thread.join()
 
-        return list(seen)
+        return list(seen) #END
 
 if __name__ == "__main__":
     class HtmlParser:

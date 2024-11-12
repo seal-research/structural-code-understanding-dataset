@@ -25,9 +25,9 @@ if __name__ == "__main__":
     reader = Thread(target=read, args=(input_file,))
     writer = Thread(target=write, args=(output_file,))
     reader.start()
-    writer.start()
-    #START
+    writer.start() #START
+
     reader.join()
-    writer.join()
-    #END
+    writer.join() #END
+
     print(output_file.getvalue())

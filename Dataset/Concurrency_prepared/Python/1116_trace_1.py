@@ -30,6 +30,21 @@ if __name__ == "__main__":
 
   n = 5
   zeroEvenOdd = ZeroEvenOdd(n)
-  Thread(target=zeroEvenOdd.zero, args=(printNumber,)).start()
-  #START
-  Thread(target=zeroEvenOdd.even, args=(printNumber,)).start()
+  
+  # Start threads for zero, even, and odd functions
+  t1 = Thread(target=zeroEvenOdd.zero, args=(printNumber,))
+  t2 = Thread(target=zeroEvenOdd.even, args=(printNumber,))
+  t3 = Thread(target=zeroEvenOdd.odd, args=(printNumber,))
+  
+  t1.start() #START
+
+  t2.start()
+  t3.start()
+
+  t1.join()
+  t2.join()
+  t3.join() #END
+
+
+  print("\nAll threads have finished.")
+

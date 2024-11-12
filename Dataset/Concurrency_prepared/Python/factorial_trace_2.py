@@ -29,16 +29,16 @@ if __name__ == "__main__":
     numbers = [13, 14, 15, 16, 17, 18]
     result = []
 
-    even_thread = threading.Thread(target=even_factorial, args=(numbers, result))
-    #START
+    even_thread = threading.Thread(target=even_factorial, args=(numbers, result)) #START
+
     odd_thread = threading.Thread(target=odd_factorial, args=(numbers, result))
 
     even_thread.start()
     odd_thread.start()
 
     even_thread.join()
-    odd_thread.join()
-    #END
+    odd_thread.join() #END
+
 
     total_even_factorial, total_odd_factorial = result
     print(f"Total sum of even factorials: {total_even_factorial}, Total sum of odd factorials: {total_odd_factorial}")

@@ -17,7 +17,11 @@ if __name__ == "__main__":
     w1 = threading.Thread(target=worker, args=((4,barrier)))
     w2 = threading.Thread(target=worker, args=((5,barrier)))
     w3 = threading.Thread(target=worker, args=((6,barrier)))
-    w1.start()
-    #START
+    w1.start() #START
+
     w2.start()
     w3.start()
+
+    w1.join()
+    w2.join()
+    w3.join()

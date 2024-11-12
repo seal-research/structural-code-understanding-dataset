@@ -1,4 +1,4 @@
-from time import time, sleep
+from time import time as current_time, sleep
 from threading import Thread
 
 class Integrator(Thread):
@@ -9,16 +9,17 @@ class Integrator(Thread):
         self.K   = K
         self.S   = 0.0
         self.__run = True
-        self.start()
+        self.start() #START
+
 
     def run(self):
         "entry point for the thread"
         interval = self.interval
-        start = time()
+        start = current_time()
         t0, k0 = 0, self.K(0)
         while self.__run:
             sleep(interval)
-            t1 = time() - start
+            t1 = current_time() - start
             k1 = self.K(t1)
             self.S += (k1 + k0)*(t1 - t0)/2.0
             t0, k0 = t1, k1
@@ -26,7 +27,6 @@ class Integrator(Thread):
     def join(self):
         self.__run = False
         Thread.join(self)
-
 if __name__ == "__main__":
 
     ai = Integrator(lambda t: tan(pi * t / 4))  # Use tan(pi*t/4) for more varied behavior
