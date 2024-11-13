@@ -204,5 +204,5 @@ def main(input_df):
 
 if __name__ == "__main__":
     #process_python_files()
-    new_df = main(pd.read_csv('Complex_Trace/program_traces_Python_Concurrency.csv'))
+    new_df = main(pd.read_csv('Complex_Trace/program_traces_Python_Concurrency_T.csv'))
 
