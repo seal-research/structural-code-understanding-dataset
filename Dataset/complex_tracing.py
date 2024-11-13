@@ -202,7 +202,47 @@ def main(input_df):
     
     return processed_df
 
+def add_code_indices(df):
+
+    def read_file_with_enumeration(path):
+        """
+        Read file line-by-line and append enumeration comments to each line.
+        If a line already has a comment, add enumeration only if it is not commented.
+        Empty lines will also be annotated with enumeration comments.
+        """
+        enumerated_lines = []
+        with open(path, 'r') as file:
+            lines = file.readlines()
+            for idx, line in enumerate(lines, start=1):
+                # Split at existing comment, if any
+                if "#" in line:
+                    line_without_comment = line.split("#")[0]
+                else:
+                    line_without_comment = line
+                
+                # Annotate the line, including empty lines
+                if line_without_comment.strip():  # Non-empty line
+                    enumerated_line = f"{line_without_comment.strip()} # {idx}"
+                else:  # Empty line
+                    enumerated_line = f"# {idx}"
+                    
+                enumerated_lines.append(enumerated_line)
+        return '\n'.join(enumerated_lines)
+    
+    # Add the 'Content' column with enumerated content
+    df['Code_Indices'] = df.apply(
+        lambda row: read_file_with_enumeration(
+            os.path.join(row['Category'], "Python", f"{row['Filename']}_trace_{row.name % 5 + 1}.py")
+        ),
+        axis=1
+    )
+    
+    # Now, you can save this updated DataFrame to a CSV file, if needed
+    #df.to_csv("output_with_content.csv", index=False)
+    return df
+
 if __name__ == "__main__":
     #process_python_files()
-    new_df = main(pd.read_csv('Complex_Trace/program_traces_Python_Concurrency_T.csv'))
+    #new_df = main(pd.read_csv('Complex_Trace/program_traces_Python_Concurrency_T.csv'))
+    df = add_code_indices(pd.read_csv('Complex_Trace/program_traces_Python_Recursion_SIDX.csv', index_col=0))
 
