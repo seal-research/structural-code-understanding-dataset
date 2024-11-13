@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     # Create and start the randomize thread
     t1 = threading.Thread(target=randomize, args=(buckets, terminate))
-    t1.start()
+    t1.start()#START
 
     # Create and start the equalize thread
     t2 = threading.Thread(target=equalize, args=(buckets, terminate))

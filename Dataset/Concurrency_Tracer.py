@@ -16,49 +16,46 @@ import collections
 import threading
 from math import cos, pi, log, tan, sqrt, exp
 import concurrent.futures
+import nest_asyncio
+nest_asyncio.apply()
 import asyncio
 from typing import TextIO, Callable
 import concurrent
 from queue import Queue
 import random
 
+import sys
+import threading
+
+
 def run_code_and_trace(filepath):
     """
     Executes the code in filepath and traces all lines from dynamically executed code
     including lines inside functions/classes defined within that code.
     Handles concurrent program traces with #START and #END markers.
+    If the file contains asyncio, apply a different tracing method.
     """
     line_numbers = []
     concurrent_starts = set()
     concurrent_ends = set()
-    
+
     # First pass: identify concurrent sections
     with open(filepath, "r") as file:
         lines = file.readlines()
         
     for i, line in enumerate(lines, 1):
         if '#START' in line:
-            # Move #START comment up only if it's alone on its line
-            line_without_comment = line.replace('#START', '').strip()
-            if i > 1 and not line_without_comment:  # Check if line is empty except for comment
-                lines[i-2] = lines[i-2].rstrip() + ' #START\n'
-                lines[i-1] = '\n'  # Empty line
-                concurrent_starts.add(i-1)
-            else:
-                concurrent_starts.add(i)
+            concurrent_starts.add(i)
         if '#END' in line:
-            # Move #END comment up only if it's alone on its line
-            line_without_comment = line.replace('#END', '').strip()
-            if i > 1 and not line_without_comment:  # Check if line is empty except for comment
-                lines[i-2] = lines[i-2].rstrip() + ' #END\n'
-                lines[i-1] = '\n'  # Empty line
-                concurrent_ends.add(i-1)
-            else:
-                concurrent_ends.add(i)
-    
-    # Write modified code back
-    with open(filepath, "w") as file:
-        file.writelines(lines)
+            concurrent_ends.add(i)
+
+    # Check if asyncio is present in the file
+    with open(filepath, "r") as file:
+        code = file.read()
+        if 'asyncio' in code or 'async def' in code or 'await' in code:
+            is_asyncio = True
+        else:
+            is_asyncio = False
     
     def trace_lines(frame, event, arg):
         # Only trace lines from dynamically executed code
@@ -66,43 +63,40 @@ def run_code_and_trace(filepath):
             line_number = frame.f_lineno
             
             # Check if this is a concurrent section start
-            if line_number in concurrent_starts:
-                line_numbers.append(f"({line_number}")
-            # Check if this is a concurrent section end
-            elif line_number in concurrent_ends:
-                line_numbers.append(f"{line_number})")
+            if line_number in concurrent_starts and not '(' in line_numbers:
+                line_numbers.append('(')
+                line_numbers.append(line_number)
+            elif line_number in concurrent_ends and not ')' in line_numbers:
+                line_numbers.append(')')
+                line_numbers.append(line_number)
             else:
                 line_numbers.append(line_number)
         return trace_lines
 
     try:
-        # Read the code and prepare to execute
-        with open(filepath, "r") as file:
-            code = file.read()
-        # Apply the trace and execute the code
-        shared_globals = globals().copy()  # Copy the current globals to preserve imports
-        
-        # Apply the trace and execute the code in an isolated global environment
+
+        # Apply the standard trace function to all threads
         sys.settrace(trace_lines)
-        print(filepath)
+        threading.settrace(trace_lines)
         
-        # Execute the code in an isolated environment, preserving only the imports
-        isolated_globals = shared_globals.copy()  # New globals for exec to isolate the state
-        exec(code, isolated_globals)
+        # Execute the code in an isolated global environment
+        shared_globals = globals().copy()  # Copy current globals to preserve imports
+        isolated_globals = shared_globals.copy()
+        
+        # Execute the code
+        with open(filepath, "r") as file:
+            exec(file.read(), isolated_globals)
+            
     except Exception as e:
-        print(filepath)
-        print(f"Error during execution: {str(e)}")
+        print(f"Error during execution of {filepath}: {str(e)}")
     finally:
-        # Reset tracing
+        # Reset tracing for main thread
         sys.settrace(None)
         
     # If there are unclosed concurrent sections, add closing bracket at the end
-    if len([x for x in line_numbers if isinstance(x, str) and x.startswith("(")]) > len([x for x in line_numbers if isinstance(x, str) and x.endswith(")")]):
-        if isinstance(line_numbers[-1], str):
-            line_numbers[-1] = f"{line_numbers[-1]})"
-        else:
-            line_numbers[-1] = f"{line_numbers[-1]})"
-    
+    if '(' in line_numbers and not ')' in line_numbers:
+        line_numbers.append(')')
+            
     return line_numbers
 
 def process_python_files():
@@ -138,7 +132,7 @@ def process_python_files():
     if results:
         import pandas as pd
         df = pd.DataFrame(results)
-        output_file = 'Complex_Trace/program_traces_Python_Concurrency.csv'
+        output_file = 'Complex_Trace/program_traces_Python_Concurrency_T.csv'
         df.to_csv(output_file, index=False)
         print(f"Results saved to {output_file}")
     else:

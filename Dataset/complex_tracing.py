@@ -56,7 +56,7 @@ def run_code_and_trace(filepath):
 
 # Example usage in a function that processes files
 def process_python_files():
-    base_folders = ['OOP_prepared']  # List the folders containing your Python files
+    base_folders = ['Concurrency_prepared']  # List the folders containing your Python files
     results = []
 
     for folder in base_folders:
@@ -89,7 +89,7 @@ def process_python_files():
     if results:
         import pandas as pd
         df = pd.DataFrame(results)
-        output_file = 'Complex_Trace/program_traces_Python_OOP.csv'
+        output_file = 'Complex_Trace/program_traces_Python_Concurrrency.csv'
         df.to_csv(output_file, index=False)
         print(f"Results saved to {output_file}")
     else:
@@ -168,7 +168,7 @@ def process_trace(df):
             for line in trace_lines:
                 # Assuming each line starts with a line number
                 try:
-                    if line > main_line:
+                    if(isinstance(line, str) or line > main_line):
                         found_start = True
                     if found_start:
                         trimmed_trace.append(line)
@@ -203,6 +203,6 @@ def main(input_df):
     return processed_df
 
 if __name__ == "__main__":
-    process_python_files()
-    #new_df = main(pd.read_csv('Complex_Trace/program_traces_Python_Recursion.csv'))
+    #process_python_files()
+    new_df = main(pd.read_csv('Complex_Trace/program_traces_Python_Concurrency.csv'))
 

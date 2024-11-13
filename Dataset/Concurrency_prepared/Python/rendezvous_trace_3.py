@@ -1,27 +1,25 @@
-class OutOfInkError(Exception):
-    """Exception raised when a printer is out of ink."""
-
-
-class Printer:
-    def __init__(self, name: str, backup: Optional[Printer]):
-        self.name = name
-        self.backup = backup
-
-        self.ink_level: int = 5
-        self.output_stream: TextIO = sys.stdout
-
-    async def print(self, msg):
-        if self.ink_level <= 0:
-            if self.backup:
-                await self.backup.print(msg)
-            else:
-                raise OutOfInkError(self.name)
-        else:
-            self.ink_level -= 1
-            self.output_stream.write(f"({self.name}): {msg}\n")
-
-
 async def main():
+    class OutOfInkError(Exception):
+        """Exception raised when a printer is out of ink."""
+
+
+    class Printer:
+        def __init__(self, name: str, backup: Optional["Printer"]):
+            self.name = name
+            self.backup = backup
+
+            self.ink_level: int = 5
+
+        async def print(self, msg):
+            if self.ink_level <= 0:
+                if self.backup:
+                    await self.backup.print(msg)
+                else:
+                    raise OutOfInkError(self.name)
+            else:
+                self.ink_level -= 1
+                print(f"({self.name}): {msg}\n")
+
     reserve = Printer("reserve", None)
     main = Printer("main", reserve)
 

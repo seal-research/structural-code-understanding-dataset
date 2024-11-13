@@ -1,11 +1,11 @@
-def counter(name, max_steps=10):
+def counter(max_steps=10):
     n = 0
     t1 = time.time()
     while n < max_steps:
         time.sleep(0.5)
         n += 1
-        print(f"Counter {name}: {n}")
-    print(f'Counter {name} ran for %5.3f seconds.' % (time.time() - t1))
+        print(n)
+    print(f'Program ran for {(time.time() - t1)} seconds.')
 
 if __name__ == "__main__":
     max_steps = 10  # Set the desired number of steps for each counter

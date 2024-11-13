@@ -65,14 +65,13 @@ if __name__ == "__main__":
 
     # Create and start the randomize thread
     t1 = threading.Thread(target=randomize, args=(buckets, terminate))
-    t1.start()
+    t1.start()#START
 
     # Create and start the equalize thread
     t2 = threading.Thread(target=equalize, args=(buckets, terminate))
     t2.start()
 
-    # Main thread, display state
-    max_steps = 10  # Define the number of steps (iterations)
+    max_steps = 10
     current_step = 0
 
     try:

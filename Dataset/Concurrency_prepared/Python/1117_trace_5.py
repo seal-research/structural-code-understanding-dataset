@@ -38,6 +38,6 @@ if __name__ == "__main__":
     
     # Start and join threads
     for t in threads:
-        t.start()
+        t.start()#START
     for t in threads:
         t.join()

@@ -1,26 +1,33 @@
+import threading
+import time
+import random
+
 class Philosopher(threading.Thread):
 
-    running = True
-
-    def __init__(self, xname, forkOnLeft, forkOnRight):
+    def __init__(self, xname, forkOnLeft, forkOnRight, max_steps):
         threading.Thread.__init__(self)
         self.name = xname
         self.forkOnLeft = forkOnLeft
         self.forkOnRight = forkOnRight
+        self.max_steps = max_steps
+        self.steps_taken = 8  # Track the number of dine steps taken
 
     def run(self):
-        while(self.running):
-            time.sleep(random.uniform(3,13))
+        while self.steps_taken < self.max_steps:
+            time.sleep(random.uniform(3, 13))  # Thinking
             print(f'{self.name} is hungry.')
             self.dine()
+            self.steps_taken += 1
+        print(f"{self.name} has completed {self.max_steps} dining steps and stops.")
 
     def dine(self):
         fork1, fork2 = self.forkOnLeft, self.forkOnRight
 
-        while self.running:
+        while True:
             fork1.acquire(True)
             locked = fork2.acquire(False)
-            if locked: break
+            if locked:
+                break
             fork1.release()
             print(f'{self.name} swaps forks')
             fork1, fork2 = fork2, fork1
@@ -31,20 +38,25 @@ class Philosopher(threading.Thread):
         fork2.release()
         fork1.release()
 
-    def dining(self):			
+    def dining(self):
         print(f'{self.name} starts eating ')
-        time.sleep(random.uniform(1,10))
+        time.sleep(random.uniform(1, 10))  # Eating
         print(f'{self.name} finishes eating and leaves to think.')
 
 if __name__ == "__main__":
-    philosopherNames = ('Aristotle','Kant','Spinoza','Marx', 'Russel','Marx', 'Russel')
-    forks = [threading.Lock() for n in range(len(philosopherNames))]
-    philosophers = [Philosopher(philosopherNames[i], forks[i % len(philosopherNames)], forks[(i + 1) % len(philosopherNames)]) for i in range(len(philosopherNames))]
-    random.seed(507129)
-    Philosopher.running = True
-    for p in philosophers: p.start() #START
+    philosopherNames = ('Aristotle', 'Kant')
+    forks = [threading.Lock() for _ in range(len(philosopherNames))]
+    max_steps = 3  # Set the desired number of dine steps per philosopher
 
-    time.sleep(40)
-    Philosopher.running = False #END
+    philosophers = [
+        Philosopher(philosopherNames[i], forks[i % len(philosopherNames)], forks[(i + 1) % len(philosopherNames)], max_steps)
+        for i in range(len(philosopherNames))
+    ]
 
-    print ("Test 4 finished.")
+    for p in philosophers:
+        p.start()#START
+
+    for p in philosophers:
+        p.join()#END
+
+    print("Test finished.")

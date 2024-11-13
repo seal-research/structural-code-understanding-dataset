@@ -1,42 +1,47 @@
 from time import time as current_time, sleep
 from threading import Thread
+from math import cos, sin, tan, pi
 
 class Integrator(Thread):
-    'continuously integrate a function `K`, at each `interval` seconds'
-    def __init__(self, K=lambda t:0, interval=1e-4):
+    'Integrates a function `K` for a fixed number of steps with an interval between each step.'
+    
+    def __init__(self, K=lambda t: 0, interval=1e-4, steps=10000):
         Thread.__init__(self)
-        self.interval  = interval
-        self.K   = K
-        self.S   = 0.0
-        self.__run = True
-        self.start() #START
-
+        self.interval = interval
+        self.K = K
+        self.S = 0.0
+        self.steps = steps  # Number of integration steps to run
+        self.start()#START
 
     def run(self):
-        "entry point for the thread"
+        "Entry point for the thread."
         interval = self.interval
         start = current_time()
         t0, k0 = 0, self.K(0)
-        while self.__run:
+        
+        for _ in range(self.steps):
             sleep(interval)
             t1 = current_time() - start
             k1 = self.K(t1)
-            self.S += (k1 + k0)*(t1 - t0)/2.0
+            self.S += (k1 + k0) * (t1 - t0) / 2.0
             t0, k0 = t1, k1
 
     def join(self):
-        self.__run = False
-        Thread.join(self)
-if __name__ == "__main__":
+        Thread.join(self)  # Wait for the thread to finish
 
-    ai = Integrator(lambda t: tan(pi * t / 4))  # Use tan(pi*t/4) for more varied behavior
-    sleep(1)  # Shorter sleep for more frequent changes
-    print(ai.S)
-    
-    ai.K = lambda t: tan(pi * t / 2)  # Change the function to tan(pi*t/2)
-    sleep(1.5)  # Longer sleep for more varied integration progress
-    print(ai.S)
-    
-    ai.K = lambda t: 0  # Stop integration (function is now zero)
-    sleep(0.5)  # Short sleep before printing the final result
-    print(ai.S)
+if __name__ == "__main__":
+    # Create two integrators with different functions
+    integrator1 = Integrator(lambda t: cos(pi * t), steps=15)
+    integrator2 = Integrator(lambda t: sin(pi * t), steps=15)
+    integrator3 = Integrator(lambda t: tan(pi * t), steps=15)
+
+    # Wait for both integrators to complete
+    integrator1.join()
+    integrator2.join()
+    integrator3.join()
+    #END
+
+    # Print the results of each integrator
+    print("Integrator 1 result:", integrator1.S)
+    print("Integrator 2 result:", integrator2.S)
+    print("Integrator 3 result:", integrator3.S)
