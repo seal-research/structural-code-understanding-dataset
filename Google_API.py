@@ -4,7 +4,7 @@ import pandas as pd
 from google.oauth2 import service_account
 import google.cloud.aiplatform
 from vertexai.preview.language_models import TextGenerationModel
-from vertexai.preview.generative_models import GenerativeModel, Image
+from vertexai.preview.generative_models import GenerativeModel, Image, GenerationConfig
 from anthropic import AnthropicVertex
 from transformers import pipeline
 from openai import AzureOpenAI
@@ -26,13 +26,13 @@ logging.basicConfig(
 df = pd.read_csv('Dataset/HumanEval_trace_expanded_fixed_reannotated.csv')
 
 # Path to your service account key file
-key_path = "nbtest-439420-28cc48108dc9.json"#"cs6158-structuralunderstanding-2647462afe3e.json"
+key_path = "nbtest-439420-28cc48108dc9.json"
 
 # Create credentials using the service account key
 credentials = service_account.Credentials.from_service_account_file(key_path)
 
 # Initialize Google Cloud AI Platform
-google.cloud.aiplatform.init(project="nbtest-439420", location="us-central1", credentials=credentials)
+google.cloud.aiplatform.init(project="nbtest-439420", location="us-east5", credentials=credentials)
 
 # Load the API key from the JSON file
 def load_api_key():
@@ -66,7 +66,7 @@ def prompt_gemini(project_id: str, model_name: str, prompt: str, temperature: fl
     vertexai.init(project=project_id, location="us-central1")
     model = GenerativeModel(model_name)
         
-    response = model.generate_content(prompt)
+    response = model.generate_content(prompt, generation_config=GenerationConfig(temperature=temperature))
     
     return response.text
 
@@ -107,53 +107,6 @@ def predict_large_language_model_sample(
     print(f"Response from Model: {response.text}")
     return response.text
 
-# Prompts for testing
-# =============================================================================
-# one_shot_prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
-# In the following, I will give you the source code of a program written in Python. The program may feature different functions, which may call each other.
-# To make the task more accessible to you, I have annotated the lines with their index as comments (those begin with a #). The following is very important! *Please note that the function signatures are generally not called,
-#  instead you should start with the first line of the function. This does not apply to the function call, of course.* In addition to the function, I will give you an initial input and the called function.
-# It is your task to return the called lines, in order, as a list. I will give you an example:
-# Source Code : """def simple_loop(x): #1
-#                     for i in range(3): #2
-#                         print(i+x) #3
-#                     return i #4
-#               """
-# Input: (5)
-# Correct solution: [2,3,2,3,2,3,2,4]
-# Now I will give you your task.
-# Here is the source code: {df.loc[7, 'Code_Indices']}
-# Here is the called function: {df.loc[7, 'Name']}
-# Here is the input to the function {df.loc[7, 'FunctionCall']}
-# Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. No other output.                                                                                          
-# '''
-# =============================================================================
-
-# Example usage of the functions (uncomment to run)
-# claude_response = prompt_claude("cs6158-structuralunderstanding", "us-east5", one_shot_prompt)
-# response = prompt_gemini("cs6158-structuralunderstanding", "gemini-1.5-pro-002", one_shot_prompt)
-# huggingface_response = prompt_huggingface("gpt2", one_shot_prompt_CPP)
-
-# print("Claude Response:", claude_response)
-# print("Gemini Response:", gemini_response)
-# print("Huggingface Response:", huggingface_response)
-
-# Make the prediction
-#reply = predict_large_language_model_sample("cs6158-structuralunderstanding", "text-bison@002", 0.1, 2048, 0.8, 40, one_shot_prompt_CPP, "us-central1")
-
-#client = AnthropicVertex(region="us-east5", project_id="cs6158-structuralunderstanding")
-
-#message = client.messages.create(
-#    max_tokens=1024,
-#    messages=[
-#      {
-#        "role": "user",
-#        "content": one_shot_prompt_CPP,
-#      }
-#    ],
-#    model="claude-3-5-sonnet@20240620",
-#)
-
 def prompt_gemini_with_backoff(project_id: str, model_name: str, prompt: str):
     """Wrap Gemini prompt with exponential backoff in case of rate limit."""
     def call_gemini():
@@ -181,7 +134,7 @@ def calculate_distance(actual, predicted):
 
 # Define prompt function for GPT-4
 def prompt_gpt4o_with_backoff(prompt: str, max_tokens: int = 4096):
-    """Wrap GPT-4 prompt with exponential backoff."""
+    """Wrap GPT-4 prompt with exponential backoff and general retry logic."""
     def call_gpt4o():
         headers = {
             "Content-Type": "application/json",
@@ -206,7 +159,24 @@ def prompt_gpt4o_with_backoff(prompt: str, max_tokens: int = 4096):
         # Extracting the assistant's response
         return reply['choices'][0]['message']['content']
 
-    return exponential_backoff_retry(call_gpt4o)
+    def retry_with_general_errors(max_retries=3):
+        """Retry function for general errors (not rate limits)."""
+        for attempt in range(max_retries):
+            try:
+                # First try the exponential backoff for rate limits
+                return exponential_backoff_retry(call_gpt4o)
+            except Exception as e:
+                # If it's not a rate limit error (already handled by exponential_backoff)
+                if "429" not in str(e) and "529" not in str(e):
+                    if attempt < max_retries - 1:  # Don't log on last attempt
+                        logging.warning(f"Request failed with error: {str(e)}. Attempt {attempt + 1} of {max_retries}")
+                        time.sleep(1)  # Simple 1-second delay between retries
+                        continue
+                raise e  # Re-raise the error if all retries are exhausted or if it's a rate limit error
+        
+        raise Exception(f"Failed after {max_retries} retries")
+
+    return retry_with_general_errors()
 
 def exponential_backoff_retry(func, retries=10, backoff_factor=2, max_wait=120):
     """Retry with exponential backoff in case of rate limit error (429)."""
@@ -225,7 +195,7 @@ def exponential_backoff_retry(func, retries=10, backoff_factor=2, max_wait=120):
     raise Exception("Exceeded maximum retries due to rate limit.")
 
 # Define prompt function for Claude
-def prompt_claude_with_backoff(project_id: str, region: str, prompt: str, max_tokens: int = 1024):
+def prompt_claude_with_backoff(project_id: str, region: str, prompt: str, max_tokens: int = 1024, temperature: float = 0.):
     """Wrap Claude prompt with exponential backoff."""
     def call_claude():
         client = AnthropicVertex(region=region, project_id=project_id)
@@ -233,6 +203,7 @@ def prompt_claude_with_backoff(project_id: str, region: str, prompt: str, max_to
             max_tokens=max_tokens,
             messages=[{"role": "user", "content": prompt}],
             model="claude-3-5-sonnet@20240620",  # Specify Claude model version
+            temperature = temperature,
         )
         reply = message.model_dump_json(indent=2)
         return fix_predicted_lines(json.loads(reply)['content'][0]['text'])
@@ -264,33 +235,92 @@ def prompt_model_with_backoff(project_id: str, model_name: str, prompt: str, reg
     else:
         raise ValueError("Unsupported model. Please use either 'claude','gemini' or 'gpt4o'.")
 
-def process_batch(batch_df, model_name, project_id, region):
+def process_batch(batch_df, model_name, project_id, region, topic='HumanEval'):
     """Process a batch of requests."""
     batch_results = []
     for index, row in batch_df.iterrows():
         try:
-            # Dynamically generate the prompt for each row
-            prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
-            In the following, I will give you the source code of a program written in Python. The program may feature different functions, which may call each other.
-            To make the task more accessible to you, I have annotated the lines with their index as comments (those begin with a #).
-            The following is very important! *Please note that the function signatures are generally not called,
-            instead you should start with the first line of the function. This does not apply to the function call, of course.*
-            In addition to the function, I will give you an initial input and the called function.
-            It is your task to return the called lines, in order, as a list. I will give you an example:
-            Source Code : """def simple_loop(x): #1
-                                for i in range(3): #2
-                                    print(i+x) #3
-                                return i #4
-                          """
-            Input: (5)
-            Correct solution: [2,3,2,3,2,3,2,4]
-            Now I will give you your task.
-            Here is the source code: {row['Code_Indices']}
-            Here is the called function: {row['Name']}
-            Here is the input to the function {row['FunctionCall']}
-            Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. Think about the solution step-by-step,
-            going through execution steps one at a time. Finally, print the solution as a list of executed steps.
+            if(topic=='HumanEval'):
+                # Dynamically generate the prompt for each row
+                prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
+                In the following, I will give you the source code of a program written in Python. The program may feature different functions, which may call each other.
+                To make the task more accessible to you, I have annotated the lines with their index as comments (those begin with a #).
+                The following is very important! *Please note that the function signatures are generally not called,
+                instead you should start with the first line of the function. This does not apply to the function call, of course.*
+                In addition to the function, I will give you an initial input and the called function.
+                It is your task to return the called lines, in order, as a list. I will give you an example:
+                Source Code : """def simple_loop(x): #1
+                                    for i in range(3): #2
+                                        print(i+x) #3
+                                    return i #4
+                              """
+                Input: (5)
+                Correct solution: [2,3,2,3,2,3,2,4]
+                Now I will give you your task.
+                Here is the source code: {row['Code_Indices']}
+                Here is the called function: {row['Name']}
+                Here is the input to the function {row['FunctionCall']}
+                Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature lines. Think about the solution step-by-step,
+                going through execution steps one at a time. Finally, print the solution as a list of executed steps.
             '''
+            elif(topic=='Recursion' or topic=='OOP'):
+                prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
+                In the following, I will give you the source code of a program written in Python. The program may feature different functions, which may call each other.
+                To make the task more accessible to you, I have annotated the lines with their index as comments (those begin with a #).
+                The following is very important! *Please note that the function signatures are generally not called,
+                instead you should start with the first line of the function. This does not apply to the function call of course.*
+                In addition to the function, the code will feature a 'main' code block, which you should execute. It is possible that functions are defined in the 
+                main method, which means the signature will be read once, but not the body.
+                It is your task to return the called lines while executing the main, in order, as a list. I will give you an example:
+                Source Code : """def simple_loop(x): #1
+                                    for i in range(3): #2
+                                        print(i+x) #3
+                                    return i #4
+                                #5
+                                if __name__ == "__main__":#6
+                                   simple_loop(5)#7
+                              """
+                Correct solution: [7,2,3,2,3,2,3,2,4]
+                Now I will give you the code for your task.
+                Here is the source code: {row['Code_Indices']}
+                Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature line during a call. Print the solution as a list of executed steps.
+                Do not produce any other output.
+            '''
+            elif(topic=='Concurrency'):
+                prompt = f'''This task will evaluate your ability to appreciate the control flow of code with a given input.
+                In the following, I will give you the source code of a program written in Python. The program may feature different functions, which may call each other.
+                To make the task more accessible to you, I have annotated the lines with their index as comments (those begin with a #).
+                The following is very important! *Please note that the function signatures are generally not called,
+                instead you should start with the first line of the function. This does not apply to the function call of course.*
+                In addition to the function, the code will feature a 'main' code block, which you should execute. It is possible that functions are defined in the 
+                main method, which means the signature will be read once, but not the body.
+                It is your task to return the called lines while executing the main, in order, as a list. The contained code may contain concurrency. For this purpose, you are supposed to mark the corresponding lines
+                using parantheses. In particular, an opening paranthesis should be placed once concurrency starts and a closing one should be placed once it ends (if it concurrency never ends explicitly, place it at the very end).
+                I will give you an example:
+                Source Code : """def task(name):#1
+                                    print("Task starting")#2
+                                    time.sleep(2)#3
+                                    print("Task completed")#4
+                                #5
+                                if __name__ == "__main__":#6
+                                    thread1 = threading.Thread(target=task, args=('A',))#7
+                                    thread2 = threading.Thread(target=task, args=('B',))#8
+                                #9
+                                    thread1.start()#10
+                                    thread2.start()#11
+                                #12
+                                    thread1.join()#13
+                                    thread2.join()#14
+                                #15
+                                    print("All tasks completed")#16
+                              """
+                Correct solution: [7,8,(,10,2,3,4,11,2,3,4,13,14,),16]
+                Due to the concurrency, execution order may vary. You can pick any valid combination here as long as it is marked correctly with the parentheses.
+                Now I will give you the code for your task.
+                Here is the source code: {row['Code_Indices']}
+                Please produce the python list containing the executed line numbers in order now. Remember not to include the function signature line during a call. Print the solution as a list of executed steps.
+                Do not produce any other output.
+                '''
             
             # Use the appropriate model with backoff
             response = prompt_model_with_backoff(project_id ,model_name, prompt, region)
@@ -306,16 +336,23 @@ def process_batch(batch_df, model_name, project_id, region):
             matching = (response == str(actual_lines) or response == str(actual_lines[1:]))
 
             # Append result to the list
-            batch_results.append([row['HumanEval_ID'], row['Name'], row['FunctionCall'], response, actual_lines, matching, distance])
-
+            if(topic == 'HumanEval'):
+                batch_results.append([row['HumanEval_ID'], row['Name'], row['FunctionCall'], response, actual_lines, matching, distance])
+            else:
+                batch_results.append([row['Filename'], row['Category'], response, actual_lines, matching, distance])
         except Exception as e:
-            print(f"Error in entry {row['HumanEval_ID']}: {e}")
-            logging.error(f"Error in entry {row['HumanEval_ID']}: {e}")
-            batch_results.append([row['HumanEval_ID'], row['Name'], row['FunctionCall'], "ERROR", "ERROR", False, "N/A"])
+            if(topic == 'HumanEval'):
+                print(f"Error in entry {row['HumanEval_ID']}: {e}")
+                logging.error(f"Error in entry {row['HumanEval_ID']}: {e}")
+                batch_results.append([row['HumanEval_ID'], row['Name'], row['FunctionCall'], "ERROR", "ERROR", False, "N/A"])
+            else:
+                print(f"Error in entry {row['Filename']}: {e}")
+                logging.error(f"Error in entry {row['Filename']}: {e}")
+                batch_results.append([row['Filename'], row['Category'], "ERROR", "ERROR", False, "N/A"])
 
     return batch_results
 
-def batch_test_llm_on_code(df, model_name, project_id, batch_size=10, region=None):
+def batch_test_llm_on_code(df, model_name, project_id, batch_size=10, region=None, topic='HumanEval'):
     """Test LLM on all entries in the dataset, processing requests in batches."""
     total_results = []
     num_batches = len(df) // batch_size + (1 if len(df) % batch_size != 0 else 0)
@@ -328,19 +365,28 @@ def batch_test_llm_on_code(df, model_name, project_id, batch_size=10, region=Non
         logging.info(f"Processing batch {batch_num + 1} of {num_batches}.")
         
         # Process the current batch
-        batch_results = process_batch(batch_df, model_name, project_id, region)
+        batch_results = process_batch(batch_df, model_name, project_id, region, topic)
         
         # Add batch results to the total results
         total_results.extend(batch_results)
 
     return total_results
 
+df = pd.read_csv("Dataset/Complex_Trace/program_traces_Python_Concurrency_Lines.csv")
+results = batch_test_llm_on_code(df, 'claude-3-5-sonnet@20240620', alternative_id, region='us-east5', topic='Concurrency')
+
 # Save results to CSV
 def save_results_to_csv(results, filename="Model_HumanEval.csv"):
     """Save the results to a CSV file."""
-    results_df = pd.DataFrame(results, columns=['HumanEval_ID', 'Name', 'FunctionCall', 'Predicted', 'Actual', 'Matched', 'Distance'])
+    if not ("HumanEval" in filename or "humaneval" in filename):
+        print("Not HumanEval")
+        results_df = pd.DataFrame(results, columns = ['Filename', 'Category', 'Predicted', 'Actual', 'Matched', 'Distance'])
+    else:
+        results_df = pd.DataFrame(results, columns=['HumanEval_ID', 'Name', 'FunctionCall', 'Predicted', 'Actual', 'Matched', 'Distance'])
     results_df.to_csv(filename, index=False)
     print(f"Results saved to {filename}")
+
+save_results_to_csv(results, filename='Dataset/Claude_Concurrency_Trace_Direct_T0.csv')
 
 def resend_failed_requests(csv_path, project_id, model_name, region=None):
     """
@@ -963,8 +1009,8 @@ def eliminate_repetitions_and_compute_distances(new_results_df: pd.DataFrame, ou
     print(f"Filtered results CSV with eliminated consecutive duplicates has been created at {output_csv}.")
 
 
-df = pd.read_csv("Claude3.5-Sonnet_HumanEval_CoT_fixed.csv")
-eliminate_repetitions_and_compute_distances(df, "Claude3.5-Sonnet_HumanEval_CoT_fixedNoReps.csv")
+#df = pd.read_csv("Claude3.5-Sonnet_HumanEval_CoT_fixed.csv")
+#eliminate_repetitions_and_compute_distances(df, "Claude3.5-Sonnet_HumanEval_CoT_fixedNoReps.csv")
 
 def clean_and_compute_metrics(df):
     def clean_predicted_list(pred):
