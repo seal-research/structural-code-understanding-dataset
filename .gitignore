@@ -5,3 +5,5 @@ model_queries.log
 Dataset/HumanEvalPlus_trace_results.csv
 cs6158_Azure.json
 Gemini_Key.txt
+openai.json
+nbtest*
