@@ -1,4 +1,4 @@
-# Structural Code Understanding does not fall out of a tree
+# CoCoNUT: Structural Code Understanding does not fall out of a tree
 In this repository we investigate the capabilities of selected Large Language Models on understanding Structural Code Execution.
 Namely, we consider the task of reproducing the code lines executed for a specific set of input arguments for a given function or a set of them.
 This task is non-trivial due to a number of factors like recalling relevant parameter values, evaluating expressions, resolving method calls and keeping track of stacked executions.
