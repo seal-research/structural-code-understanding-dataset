@@ -9,26 +9,32 @@ Models contains specific configuration files for different language models to ru
 
 A basic overview of the findings on HumanEval can be found below:
 
-## Task Performance Overview
+The table below summarizes the performance of different models across tasks, evaluated using various metrics. Metrics are grouped under two evaluation settings: COT (Chain-of-Thought reasoning) and Direct.
 
-The table below summarizes the performance of different models across tasks, evaluated under two settings: **\ccot** (Chain-of-Thought reasoning) and **\basic** (Direct reasoning).
+### COT Evaluation
 
-| **Task ID**          | \multicolumn{4}{c}{**\ccot**}                                | \multicolumn{4}{c}{**\basic**}                               |
-|-----------------------|--------------------|--------------------|---------|---------------|--------------------|--------------------|---------|---------------|
-|                       | **Acc Hard (%)**  | **Acc Mean (%)**   | **Sim** | **False Sim** | **Acc Hard (%)**  | **Acc Mean (%)**   | **Sim** | **False Sim** |
-| **Gemini1.5-Pro 002** | 47.2              | 66.2              | 0.88    | 0.37          | 47.0              | 65.7              | 0.89    | 0.37          |
-| **Claude3.5-Sonnet**  | 41.0              | 61.6              | 0.87    | 0.43          | 41.0              | 58.7              | 0.88    | 0.44          |
-| **GPT4o**             | 16.8              | 39.4              | 0.75    | 0.50          | 21.2              | 38.8              | 0.75    | 0.50          |
-| **Codestral 22B**     | 9.3               | 25.0              | 0.71    | 0.57          | 3.1               | 17.8              | 0.66    | 0.59          |
-| **LLama3.1 8B**       | 1.9               | 12.6              | 0.56    | 0.51          | 0.6               | 10.4              | 0.53    | 0.48          |
+| **Task ID**          | **Acc Hard (%)** | **Acc Mean (%)** | **Sim** | **False Sim** |
+|-----------------------|------------------|------------------|---------|---------------|
+| **Gemini1.5-Pro 002** | 47.2            | 66.2            | 0.88    | 0.37          |
+| **Claude3.5-Sonnet**  | 41.0            | 61.6            | 0.87    | 0.43          |
+| **GPT4o**             | 16.8            | 39.4            | 0.75    | 0.50          |
+| **Codestral 22B**     | 9.3             | 25.0            | 0.71    | 0.57          |
+| **LLama3.1 8B**       | 1.9             | 12.6            | 0.56    | 0.51          |
+
+### Direct Prompting Evaluation
+
+| **Task ID**          | **Acc Hard (%)** | **Acc Mean (%)** | **Sim** | **False Sim** |
+|-----------------------|------------------|------------------|---------|---------------|
+| **Gemini1.5-Pro 002** | 47.0            | 65.7            | 0.89    | 0.37          |
+| **Claude3.5-Sonnet**  | 41.0            | 58.7            | 0.88    | 0.44          |
+| **GPT4o**             | 21.2            | 38.8            | 0.75    | 0.50          |
+| **Codestral 22B**     | 3.1             | 17.8            | 0.66    | 0.59          |
+| **LLama3.1 8B**       | 0.6             | 10.4            | 0.53    | 0.48          |
+
 
 ### Explanation of Metrics:
-- **Acc Hard (%)**: Accuracy for challenging examples as a percentage.
-- **Acc Mean (%)**: Mean accuracy across all examples as a percentage.
-- **Sim**: Average similarity score between predictions and ground truth.
-- **False Sim**: Proportion of similarity attributed to incorrect predictions.
-
-### Notes:
-- Metrics are grouped under **\ccot** (Chain-of-Thought reasoning) and **\basic** (Direct reasoning).
-- Each task ID represents a specific configuration or evaluation scenario.
+- **Acc Hard (%)**: Accuracy for tasks that are traced correctly across all tests as a percentage.
+- **Acc Mean (%)**: Mean accuracy across all tests of all examples as a percentage.
+- **\ovsimshort**: Average overall similarity score between predictions and ground truth.
+- **False \ovsimshort**: Similarity score based only on incorrect predictions.
 
