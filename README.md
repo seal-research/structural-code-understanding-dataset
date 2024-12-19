@@ -1,5 +1,11 @@
 # StructuralCodeUnderstanding
-In this repository I investigate the capabilities of selected Large Language Models on understanding Structural Code Execution.
+In this repository we investigate the capabilities of selected Large Language Models on understanding Structural Code Execution.
+Namely, we consider the task of reproducing the code lines executed for a specific set of input arguments for a given function or a set of them.
+This task is non-trivial due to a number of factors like recalling relevant parameter values, evaluating expressions, resolving method calls and keeping track of stacked executions.
+In addition, we investigate the execution of advanced code concepts like OOP, Concurrency and Recursion. An example of one such task is displayed in the following:
+
+![Code Execution Tracing Task](Visualizations/NonTrivial.jpg)
+
 
 This repository contains the different scripts I have used for generating and eliciting traces from Java and Python programs.
 
