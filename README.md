@@ -46,7 +46,7 @@ The table below summarizes the performance of different models across tasks, eva
 
 We further investigated performance on advanced concepts:
 
-# Task Performance (Advanced)
+### Task Performance (Advanced)
 
 | **Task ID**          | **CoT Acc Mean (%)** | **CoT Sim** | **Direct Acc Mean (%)** | **Direct Sim** |
 |-----------------------|----------------------|-------------|-------------------------|----------------|
@@ -70,4 +70,6 @@ We further investigated performance on advanced concepts:
 | LLama3.1 8B           | 0                   | 0.28        | 0                      | 0.26           |
 
 
+### Citation
+Forthcoming
 
