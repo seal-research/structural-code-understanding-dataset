@@ -13,7 +13,7 @@ A basic overview of the findings on HumanEval can be found below:
 
 The table below summarizes the performance of different models across tasks, evaluated using various metrics. Metrics are grouped under two settings: **\ccot** and **\basic**.
 
-| **Task ID**          | **Acc Hard (%)** | **Acc Mean (%)** | **\ovsimshort** | **False \ovsimshort** | **Acc Hard (%)** | **Acc Mean (%)** | **\ovsimshort** | **False \ovsimshort** |
+| **Task ID**          | **Acc Hard (%)** | **Acc Mean (%)** | **Sim** | **False Sim** | **Acc Hard (%)** | **Acc Mean (%)** | **Sim** | **False Sim** |
 |-----------------------|------------------|------------------|-----------------|-----------------------|------------------|------------------|-----------------|-----------------------|
 | **Gemini1.5-Pro 002** | 47.2            | 66.2            | 0.88           | 0.37                 | 47.0            | 65.7            | 0.89           | 0.37                 |
 | **Claude3.5-Sonnet**  | 41.0            | 61.6            | 0.87           | 0.43                 | 41.0            | 58.7            | 0.88           | 0.44                 |
