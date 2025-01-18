@@ -1,0 +1,10 @@
+NONE: No mistake.
+ELSE: Model traces an else statement (should directly skip to the first line of the body).
+LOOP_SKIP: Model skips a loop iteration.
+STATEMENT_SKIP: The model does not execute a statement (often times this is another if statement after an if-else).
+PREDICATE_WRONG: Logical expression was evaluated incorrectly.
+DEF_SKIP: Internal function definition skipped.
+CONDITION_SKIP: A condition (if clause, for loop etc.) was skipped.
+NONSENSE: Empty, Docstring, or other lines without valid code are called.
+NO_EXIT: Model does not terminate the trace generation (Special case because it is not necessarily the first mistake)
+DEF_CALL: The method defined at top level was called although already initialized (explicitly stated in the prompt).
