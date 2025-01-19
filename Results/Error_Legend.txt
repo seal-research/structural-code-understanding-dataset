@@ -8,3 +8,4 @@ CONDITION_SKIP: A condition (if clause, for loop etc.) was skipped.
 NONSENSE: Empty, Docstring, or other lines without valid code are called.
 NO_EXIT: Model does not terminate the trace generation (Special case because it is not necessarily the first mistake)
 DEF_CALL: The method defined at top level was called although already initialized (explicitly stated in the prompt).
+EMPTY: The model did not produce a trace at the end of its response. This also includes the case where the model mistakenly produces the code result (e.g function output). 
