@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import numpy as np
 import ast  # To safely evaluate the string representation of lists
+import traceback
+import difflib
 
 HE_difficulty = {
     0: [
@@ -210,6 +212,103 @@ HE_difficulty = {
     ],
 }
 
+def calculate_match_concurrency(actual, predicted):
+    """
+    Calculate exact match between two lists with special handling for parenthesized content.
+    When parentheses overlap in position, only check if elements within them match regardless of order.
+    
+    Args:
+        actual: List or string representation of list containing the actual values
+        predicted: List or string representation of list containing the predicted values
+        
+    Returns:
+        bool: True if lists match according to the criteria, False otherwise
+    """
+    def parse_list(list_input):
+        """Convert string representation of list to actual list if needed."""
+        if isinstance(list_input, str):
+            try:
+                return ast.literal_eval(list_input)
+            except:
+                return list_input
+        return list_input
+    
+    def find_parentheses_sections(lst):
+        """Find the start and end indices of parenthesized sections and their content."""
+        start_idx = -1
+        sections = []
+        
+        for i, item in enumerate(lst):
+            if item == '(':
+                start_idx = i
+            elif item == ')' and start_idx != -1:
+                content = lst[start_idx + 1:i]
+                sections.append({
+                    'start': start_idx,
+                    'end': i,
+                    'content': content
+                })
+                start_idx = -1
+        
+        return sections
+    
+    def compare_sections(actual_list, predicted_list):
+        """Compare two lists with special handling for parenthesized sections."""
+        if len(actual_list) != len(predicted_list):
+            return False
+            
+        actual_sections = find_parentheses_sections(actual_list)
+        predicted_sections = find_parentheses_sections(predicted_list)
+        
+        # If one has parentheses and the other doesn't, require exact match
+        if bool(actual_sections) != bool(predicted_sections):
+            return actual_list == predicted_list
+        
+        # If neither has parentheses, require exact match
+        if not actual_sections:
+            return actual_list == predicted_list
+            
+        # Track which positions we've handled
+        handled_positions = set()
+        
+        # Check each predicted section against actual sections
+        for pred_section in predicted_sections:
+            section_matched = False
+            pred_start, pred_end = pred_section['start'], pred_section['end']
+            
+            # Find matching actual section
+            for actual_section in actual_sections:
+                act_start, act_end = actual_section['start'], actual_section['end']
+                
+                # Check if positions overlap (allowing for ±1 position difference)
+                if abs(pred_start - act_start) <= 1 and abs(pred_end - act_end) <= 1:
+                    # Convert content to sets for order-independent comparison
+                    actual_content = set(str(x) for x in actual_section['content'])
+                    predicted_content = set(str(x) for x in pred_section['content'])
+                    
+                    if actual_content == predicted_content:
+                        # Mark all positions in this section as handled
+                        for i in range(min(act_start, pred_start), max(act_end, pred_end) + 1):
+                            handled_positions.add(i)
+                        section_matched = True
+                        break
+            
+            if not section_matched:
+                return False
+        
+        # Check non-parentheses parts
+        for i in range(len(actual_list)):
+            if i not in handled_positions:
+                if i >= len(predicted_list) or actual_list[i] != predicted_list[i]:
+                    return False
+                
+        return True
+    
+    # Parse input lists
+    actual_list = parse_list(actual)
+    predicted_list = parse_list(predicted)
+    
+    return compare_sections(actual_list, predicted_list)
 
 def generate_accuracy_graph(model_performances: list, min_length: int = 0, save=False):
     models = []
@@ -313,21 +412,21 @@ def analyze_model_performance(model_performances: list, buckets: list):
 
 # Example usage
 # =============================================================================
-# buckets = ["1-3", "3-5", "5-10", "10-20", "25-40", "40+"]
-# model_performances = ['Claude_HumanEval_expandedNoReps.csv','Gemini_cleaned_humanEval_results_expandedNoReps.csv','GPT4o_expanded_NoReps_cleaned.csv']
-# results = analyze_model_performance(model_performances, buckets)
-# 
-# # Print results
-# for model, metrics in results.items():
-#     print(f"Model: {model}")
-#     for bucket, stats in metrics.items():
-#         # Check if stats is a dictionary before accessing its keys
-#         if isinstance(stats, dict):
-#             accuracy = stats['accuracy']
-#             average_similarity = stats['average_similarity']
-#             similarity_not_matched = stats['similarity_not_matched']
-#             print(f"  {bucket}: Accuracy = {accuracy:.4f}, Average Similarity = {average_similarity:.4f}, Similarity Not Matched = {similarity_not_matched:.4f}")
-#     print(f"  Overall Accuracy = {metrics['Overall Accuracy']:.4f}")
+#buckets = ["1-3", "3-5", "5-10", "10-25", "25-40", "40+"]
+#model_performances = ['../../Results/LLama/70B/HumanEval/results_HumanEval_llama-3.1-70b_NoReps.csv']
+#results = analyze_model_performance(model_performances, buckets)
+ 
+ # Print results
+#for model, metrics in results.items():
+#    print(f"Model: {model}")
+#    for bucket, stats in metrics.items():
+#        # Check if stats is a dictionary before accessing its keys
+#        if isinstance(stats, dict):
+#            accuracy = stats['accuracy']
+#            average_similarity = stats['average_similarity']
+#            similarity_not_matched = stats['similarity_not_matched']
+#            print(f"  {bucket}: Accuracy = {accuracy:.4f}, Average Similarity = {average_similarity:.4f}, Similarity Not Matched = {similarity_not_matched:.4f}")
+#    print(f"  Overall Accuracy = {metrics['Overall Accuracy']:.4f}")
 # =============================================================================
 
 def analyze_and_plot_learning_curves(jsonl_file: str, performance_files: list):
@@ -620,7 +719,7 @@ def print_weighted_accuracy_results(model_performances: list):
 #    'Dataset/Evaluation/LLama/8B/HumanEval/results_HumanEval_llama-3.1-8b_NoReps.csv'
 #]
 #print(analyze_model_performance(performance_files,["1-3", "3-5", "5-10", "10-25", "25-40", "40+"]))
-analyze_and_plot_learning_curves("Dataset/HumanEval/human-eval-v2-20210705.jsonl", ['Dataset/Evaluation/Gemini/HumanEval/Gemini_HumanEval_CoT_T0_NoReps.csv', 'Dataset/Evaluation/Gemini/HumanEval/HumanEval_CoT_T1_NoReps.csv', 'Dataset/Evaluation/Gemini/HumanEval/Gemini_HumanEval_Trace_Direct_T0_NoReps.csv', 'Dataset/Evaluation/Gemini/HumanEval/HumanEval_Direct_T1_NoReps.csv'])
+#analyze_and_plot_learning_curves("Dataset/HumanEval/human-eval-v2-20210705.jsonl", ['Dataset/Evaluation/Gemini/HumanEval/Gemini_HumanEval_CoT_T0_NoReps.csv', 'Dataset/Evaluation/Gemini/HumanEval/HumanEval_CoT_T1_NoReps.csv', 'Dataset/Evaluation/Gemini/HumanEval/Gemini_HumanEval_Trace_Direct_T0_NoReps.csv', 'Dataset/Evaluation/Gemini/HumanEval/HumanEval_Direct_T1_NoReps.csv'])
 import os
 import pandas as pd
 
@@ -688,7 +787,7 @@ def evaluate_performance(directory_path):
             file_overall_performance[filename] = overall_performance
 
     return file_task_performance, file_overall_performance
-task_performance, overall_performance = evaluate_performance('Dataset/Evaluation/Gemini/HumanEval')
+#task_performance, overall_performance = evaluate_performance('../../Results/QwenCoder/32B/HumanEval/')
 
 def evaluate_complex_performance(directory_path):
     overall_matched = 0
@@ -700,19 +799,37 @@ def evaluate_complex_performance(directory_path):
     for filename in os.listdir(directory_path):
         if filename.endswith(".csv"):
             file_path = os.path.join(directory_path, filename)
+            
             # Read the CSV file
-            df = pd.read_csv(file_path)
+            try:
+                df = pd.read_csv(file_path)
+            except Exception as e:
+                print(f"Error reading {file_path}: {e}")
+                continue
 
             # Check if the directory path contains 'complex' to determine format
-            if 'complex' in directory_path:
+            if 'complex' in directory_path.lower():
+                print(f"Processing complex file: {file_path}")
+                
+                # Ensure columns exist
+                if 'Matched' not in df.columns or 'Distance' not in df.columns or 'Category' not in df.columns:
+                    print(f"Missing columns in {filename}")
+                    continue
+                
                 # Add an index as a suffix to Filenames to differentiate test cases
                 df['Filename'] = df['Filename'] + df.groupby('Filename').cumcount().astype(str)
                 
                 # Group by 'Category'
                 grouped = df.groupby('Category')
+                print(f"Grouped by 'Category' in {filename}, found {len(grouped)} categories")
 
                 # Process each category group
                 for category, group in grouped:
+                    print(f"Processing category: {category}, Group size: {len(group)}")
+                    # Ensure correct types
+                    group['Matched'] = group['Matched'].astype(bool)
+                    group['Distance'] = pd.to_numeric(group['Distance'], errors='coerce')
+
                     # Aggregate 'Matched' and 'Distance' values
                     matched_count = group['Matched'].sum()  # True = 1, False = 0
                     distance_avg = group['Distance'].mean()
@@ -747,7 +864,95 @@ def evaluate_complex_performance(directory_path):
 
     return category_performance, overall_performance
 
-#task_performance, overall_performance = evaluate_performance('Dataset/Evaluation/LLama/8B/complex')
+def calculate_distance(actual, predicted):
+    """Calculate similarity between two lists of lines."""
+    actual_str = ','.join(map(str, actual))
+    predicted_str = ','.join(map(str, predicted))
+    sequence = difflib.SequenceMatcher(a=actual_str, b=predicted_str)
+    return sequence.ratio()  # Similarity ratio
+
+def calculate_distance_concurrency(actual, predicted):
+    """
+    Calculate similarity between two lists with special handling for parenthesized content.
+    Handles mismatched parentheses content gracefully.
+
+    Args:
+        actual: List or string representation of list containing the actual values
+        predicted: List or string representation of list containing the predicted values
+
+    Returns:
+        float: Average similarity ratio between corresponding parts
+    """
+    def parse_list(list_input):
+        """Parse string representation of a list into a Python list, handling parentheses as strings."""
+        if isinstance(list_input, str):
+            try:
+                # Handle parentheses by treating them as strings
+                list_input = list_input.replace("(", "'('").replace(")", "')'")
+                return ast.literal_eval(list_input)
+            except Exception as e:
+                print(f"Failed to parse list: {list_input}, Error: {e}")
+                return []
+        return list_input
+
+    def extract_parentheses_content(lst):
+        """Extract content within parentheses and its position."""
+        start_idx = -1
+        for i, item in enumerate(lst):
+            if item == "'('":
+                start_idx = i
+            elif item == "')'" and start_idx != -1:
+                return {
+                    'start': start_idx,
+                    'end': i,
+                    'content': lst[start_idx + 1:i]
+                }
+        return {'start': -1, 'end': -1, 'content': []}
+
+    def get_similarity(list1, list2):
+        """Calculate similarity between two lists using SequenceMatcher."""
+        str1 = ','.join(map(str, list1))
+        str2 = ','.join(map(str, list2))
+        return difflib.SequenceMatcher(None, str1, str2).ratio()
+
+    # Parse input lists
+    actual_list = parse_list(actual)
+    predicted_list = parse_list(predicted)
+
+    # Extract parentheses sections
+    actual_section = extract_parentheses_content(actual_list)
+    predicted_section = extract_parentheses_content(predicted_list)
+
+    # Split lists into parts
+    before_actual = actual_list[:actual_section['start']] if actual_section['start'] != -1 else actual_list
+    before_predicted = predicted_list[:predicted_section['start']] if predicted_section['start'] != -1 else predicted_list
+
+    parentheses_actual = sorted(map(str, actual_section['content']))
+    parentheses_predicted = sorted(map(str, predicted_section['content']))
+
+    after_actual = actual_list[actual_section['end'] + 1:] if actual_section['end'] != -1 else []
+    after_predicted = predicted_list[predicted_section['end'] + 1:] if predicted_section['end'] != -1 else []
+
+    # Handle mismatched content outside parentheses ranges
+    if actual_section['start'] == -1 or predicted_section['start'] == -1:
+        # No valid parentheses content in one of the lists
+        return get_similarity(actual_list, predicted_list)
+
+    # Ensure all parts are lists before appending
+    before_actual = list(before_actual)
+    before_predicted = list(before_predicted)
+    after_actual = list(after_actual)
+    after_predicted = list(after_predicted)
+
+    # Calculate similarities for each part
+    before_similarity = get_similarity(before_actual, before_predicted)
+    parentheses_similarity = get_similarity(parentheses_actual, parentheses_predicted)
+    after_similarity = get_similarity(after_actual, after_predicted)
+
+    # Return average similarity
+    return (before_similarity + parentheses_similarity + after_similarity) / 3
+
+task_performance, overall_performance = evaluate_performance('../../Results/QwenCoder/32B/Complex')
 
 def task_performance_plot(task_performance):
     import matplotlib.pyplot as plt
@@ -830,6 +1035,195 @@ def process_directory(directory_path):
     # Convert the results into a DataFrame
     results_df = pd.DataFrame(results)
     return results_df
+
+def safe_literal_eval(val):
+    """
+    Safely evaluate a string representation of a list,
+    with additional error handling and logging.
+    """
+    try:
+        # First, ensure it's a string
+        if not isinstance(val, str):
+            val = str(val)
+        
+        # Strip leading/trailing whitespace
+        val = val.strip()
+        
+        # Ensure it looks like a list-like string
+        if not (val.startswith('[') and val.endswith(']')):
+            val = f'[{val}]'
+        
+        # Use ast.literal_eval with error handling
+        return ast.literal_eval(val)
+    except (ValueError, SyntaxError, TypeError) as e:
+        print(f"Error parsing value: {val}")
+        print(f"Error details: {traceback.format_exc()}")
+        return []  # Return empty list on parsing failure
+
+
+def eliminate_repetitions_and_compute_distances_for_directory(input_directory: str):
+    """
+    Processes all CSV files in the given directory, filters entries with consecutive duplicate lines in 'Actual',
+    eliminates those duplicates, recomputes 'Matched' and 'Distance', and writes outputs to new CSVs with '_NoReps' suffix.
+    Skips processing if the '_NoReps' file already exists and ensures '_NoReps' files are not processed.
+    For files containing "concurrency" in their names, it uses calculate_match_concurrency instead of the normal equivalence check.
+    """
+    def eliminate_consecutive_duplicates(lines):
+        if not lines:
+            return "[]"
+        cleaned_lines = [lines[0]]
+        for line in lines[1:]:
+            if line != cleaned_lines[-1]:
+                cleaned_lines.append(line)
+        return '[' + ', '.join(map(str, cleaned_lines)) + ']'
+
+    for file_name in os.listdir(input_directory):
+        # Skip if the file is a '_NoReps.csv' file or does not end with '.csv'
+        if file_name.endswith('_NoReps.csv') or not file_name.endswith('.csv'):
+            continue
+
+        input_path = os.path.join(input_directory, file_name)
+        output_path = os.path.join(input_directory, file_name.replace('.csv', '_NoReps.csv'))
+
+        # Skip processing if the _NoReps file already exists
+        if os.path.exists(output_path):
+            print(f"Skipping {file_name} as {output_path} already exists.")
+            continue
+
+        try:
+            # Read the CSV file
+            new_results_df = pd.read_csv(input_path)
+
+            filtered_results = []
+
+            for index, entry in new_results_df.iterrows():
+                try:
+                    # Safely parse Actual lines
+                    actual_lines_str = str(entry['Actual'])
+                    actual_lines = safe_literal_eval(actual_lines_str)
+
+                    # Check for repetitions
+                    has_repetitions = len(actual_lines) != len(set(actual_lines)) or actual_lines != list(dict.fromkeys(actual_lines))
+                    cleaned_actual_lines_str = eliminate_consecutive_duplicates(actual_lines) if has_repetitions else actual_lines_str
+
+                    # Determine which distance and match functions to use
+                    distance_function = calculate_distance_concurrency if "concurrency" in file_name.lower() else calculate_distance
+                    match_function = calculate_match_concurrency if "concurrency" in file_name.lower() else lambda a, p: a == p
+
+                    # Prepare the row based on file type
+                    if "humaneval" in file_name.lower():
+                        row = {
+                            'HumanEval_ID': entry.get('HumanEval_ID', ''),
+                            'Name': entry.get('Name', ''),
+                            'FunctionCall': entry.get('FunctionCall', ''),
+                            'Predicted': str(entry.get('Predicted', '')),
+                            'Actual': cleaned_actual_lines_str,
+                            'Matched': str(match_function(cleaned_actual_lines_str, str(entry.get('Predicted', '')))),
+                            'Distance': distance_function(cleaned_actual_lines_str, str(entry.get('Predicted', '')))
+                        }
+                    else:
+                        row = {
+                            'Filename': entry.get('Filename', ''),
+                            'Category': entry.get('Category', ''),
+                            'Predicted': str(entry.get('Predicted', '')),
+                            'Actual': cleaned_actual_lines_str,
+                            'Matched': str(match_function(cleaned_actual_lines_str, str(entry.get('Predicted', '')))),
+                            'Distance': distance_function(cleaned_actual_lines_str, str(entry.get('Predicted', '')))
+                        }
+
+                    filtered_results.append(row)
+
+                except Exception as e:
+                    print(f"Error processing entry at index {index} in file {file_name}: {e}")
+                    print(f"Entry details: {entry}")
+                    print(f"Traceback: {traceback.format_exc()}")
+
+            # Write the filtered results to a new CSV file
+            filtered_results_df = pd.DataFrame(filtered_results)
+            filtered_results_df.to_csv(output_path, index=False)
+            print(f"Processed file saved at {output_path}")
+
+        except Exception as e:
+            print(f"Error processing file {file_name}: {e}")
+            print(f"Traceback: {traceback.format_exc()}")
+
+def analyze_accuracy_by_task(directory_path: str, min_length: int = 0):
+    """
+    Calculate and print task-level accuracy by grouping rows by 'HumanEval_ID'.
+    Accuracy is the percentage of tasks where all rows for a given task are 'Matched'.
+    
+    Args:
+        directory_path (str): Path to the directory containing performance CSV files.
+        min_length (int): Minimum trace length for filtering.
+    """
+    print(f"Analyzing task-level accuracy (Min Trace Length: {min_length})...\n")
+    
+    for filename in os.listdir(directory_path):
+        if filename.endswith(".csv"):
+            file_path = os.path.join(directory_path, filename)
+            performance_df = pd.read_csv(file_path)
+
+            # Evaluate "Actual" column and filter by trace length
+            performance_df['Actual'] = performance_df['Actual'].apply(ast.literal_eval)
+            performance_df = performance_df[performance_df['Actual'].apply(len) >= min_length]
+
+            # Group by 'HumanEval_ID' and calculate task-level accuracy
+            task_grouped = performance_df.groupby('HumanEval_ID')
+            task_accuracy = task_grouped['Matched'].all().mean()  # All rows for a task must be matched
+            
+            # Print results for this file
+            print(f"File: {filename}")
+            print(f"  Total Tasks: {len(task_grouped)}")
+            print(f"  Task-Level Accuracy: {task_accuracy * 100:.2f}%\n")
+            
+def fix_unclosed_lists_in_csv(input_csv_path: str, output_csv_path: str = None):
+    """
+    Reads a CSV file and ensures all entries in the 'Predicted' column are properly closed lists.
+    Handles cases where the list is missing a closing bracket or ends with a comma.
+    
+    Args:
+        input_csv_path (str): Path to the input CSV file
+        output_csv_path (str): Path to save the fixed CSV. If None, modifies the input file.
+    """
+    if output_csv_path is None:
+        output_csv_path = input_csv_path
+        
+    # Read the CSV file
+    df = pd.read_csv(input_csv_path)
+    
+    # Function to fix a single list string
+    def fix_list_string(val):
+        if not isinstance(val, str):
+            return val
+            
+        # Remove trailing whitespace
+        val = val.rstrip()
+        
+        # If empty or not starting with [, return as is
+        if not val or not val.startswith('['):
+            return val
+            
+        # Remove trailing comma if present
+        if val.rstrip().endswith(','):
+            val = val.rstrip().rstrip(',')
+            
+        # Add closing bracket if missing
+        if not val.rstrip().endswith(']'):
+            val = val + ']'
+            
+        return val
+    
+    # Fix the Predicted column
+    df['Predicted'] = df['Predicted'].apply(fix_list_string)
+    
+    # Save the fixed CSV
+    df.to_csv(output_csv_path, index=False)
+    
+    print(f"Fixed CSV saved to {output_csv_path}")
+    
+    # Return count of fixed entries for verification
+    return len(df[df['Predicted'].str.endswith(']', na=False)])
+
 
 
     
