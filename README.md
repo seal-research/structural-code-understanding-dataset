@@ -62,26 +62,44 @@ We further investigated performance on advanced concepts:
 
 ### Task Performance (Advanced)
 
+### Object-Oriented (40 Programs, 200 Traces)
+
 | **Task ID**          | **CoT Acc Mean (%)** | **CoT Sim** | **Direct Acc Mean (%)** | **Direct Sim** |
 |-----------------------|----------------------|-------------|-------------------------|----------------|
-| **Object-Oriented** (40 Programs, 200 Traces) |
-| Gemini1.5-Pro 002     | 14                  | 0.79        | 20                     | 0.81           |
-| Claude3.5-Sonnet      | 0                   | 0.77        | 1                      | 0.69           |
-| GPT4o                 | 4.5                 | 0.82        | 4                      | 0.73           |
-| Codestral 22B         | 1.5                 | 0.62        | 1.5                    | 0.6            |
-| LLama3.1 8B           | 0.5                 | 0.58        | 1                      | 0.48           |
-| **Recursion** (66 Programs, 330 Traces) |
-| Gemini1.5-Pro 002     | 2.7                 | 0.47        | 0.9                    | 0.41           |
-| Claude3.5-Sonnet      | 0.3                 | 0.42        | 1.2                    | 0.41           |
-| GPT4o                 | 2.7                 | 0.49        | 1.8                    | 0.38           |
-| Codestral 22B         | 1                   | 0.29        | 0                      | 0.29           |
-| LLama3.1 8B           | 0.3                 | 0.21        | 0                      | 0.35           |
-| **Concurrency** (20 Programs, 100 Traces) |
-| Gemini1.5-Pro 002     | 1                   | 0.41        | 1                      | 0.39           |
-| Claude3.5-Sonnet      | 0                   | 0.4         | 0                      | 0.42           |
-| GPT4o                 | 0                   | 0.39        | 0                      | 0.4            |
-| Codestral 22B         | 0                   | 0.29        | 0                      | 0.38           |
-| LLama3.1 8B           | 0                   | 0.28        | 0                      | 0.26           |
+| **Gemini1.5-Pro 002** | 14.0                | 0.79        | **20.0**               | **0.81**       |
+| **Claude3.5-Sonnet**  | 0.0                 | 0.77        | 1.0                    | 0.69           |
+| **GPT4o**             | 4.5                 | **0.82**    | 4.0                    | 0.73           |
+| **Qwen2.5-Coder 32B** | 14.5                | 0.78        | 4.0                    | 0.73           |
+| **LLama3.1 70B**      | **15.0**            | 0.74        | 10.0                   | 0.75           |
+| **Codestral 22B**     | 1.5                 | 0.62        | 1.5                    | 0.6            |
+| **LLama3.1 8B**       | 0.5                 | 0.58        | 1.0                    | 0.48           |
+| **Qwen2.5-Coder 7B**  | 0.0                 | 0.58        | 0.0                    | 0.56           |
+| **CodeLLama 34B**     | 0.0                 | 0.37        | 0.0                    | 0.37           |
+| **CodeLLama 7B**      | 0.0                 | 0.30        | 0.0                    | 0.40           |
+
+### Recursion (66 Programs, 330 Traces)
+
+| **Task ID**          | **CoT Acc Mean (%)** | **CoT Sim** | **Direct Acc Mean (%)** | **Direct Sim** |
+|-----------------------|----------------------|-------------|-------------------------|----------------|
+| **Gemini1.5-Pro 002** | 2.7                 | 0.47        | 0.9                    | **0.41**       |
+| **Claude3.5-Sonnet**  | 0.3                 | 0.42        | 1.2                    | **0.41**       |
+| **GPT4o**             | 2.7                 | **0.49**    | **1.8**                | 0.38           |
+| **Qwen2.5-Coder 32B** | **3.0**             | 0.35        | **1.8**                | 0.30           |
+| **LLama3.1 70B**      | 1.2                 | 0.36        | 0.6                    | 0.27           |
+| **Codestral 22B**     | 1.0                 | 0.29        | 0.0                    | 0.29           |
+| **LLama3.1 8B**       | 0.3                 | 0.21        | 0.0                    | 0.35           |
+| **Qwen2.5-Coder 7B**  | 0.0                 | 0.15        | 0.0                    | 0.16           |
+| **CodeLLama 34B**     | 0.0                 | 0.29        | 0.0                    | 0.27           |
+| **CodeLLama 7B**      | 0.0                 | 0.23        | 0.0                    | 0.26           |
+
+### Concurrency (20 Programs, 100 Traces)
+
+| **Task ID**          | **CoT Acc Mean (%)** | **CoT Sim** | **Direct Acc Mean (%)** | **Direct Sim** |
+|-----------------------|----------------------|-------------|-------------------------|----------------|
+| **Gemini1.5-Pro 002** | **1.0**             | **0.41**    | **1.0**                | 0.39           |
+| **Claude3.5-Sonnet**  | 0.0                 | 0.4         | 0.0                    | **0.42**       |
+| **
+
 
 
 ### Citation
