@@ -31,6 +31,7 @@ The table below summarizes the performance of different models across tasks, eva
 | **Codestral 22B**     | 9.3             | 25.0             | 0.71    | **0.57**      |
 | **LLama3.1 8B**       | 1.9             | 12.6             | 0.56    | 0.51          |
 | **Qwen2.5-Coder 7B**  | 1.9             | 11.0             | 0.61    | 0.56          |
+| **CodeLLama 34B**     | 1.2             | 7.6              | 0.46    | 0.43          |
 | **CodeLLama 7B**      | 0.0             | 0.1              | 0.28    | 0.28          |
 
 ### Direct Prompting Evaluation
@@ -45,7 +46,9 @@ The table below summarizes the performance of different models across tasks, eva
 | **Codestral 22B**     | 3.1             | 17.8             | 0.66    | **0.59**      |
 | **LLama3.1 8B**       | 0.6             | 10.4             | 0.53    | 0.48          |
 | **Qwen2.5-Coder 7B**  | 0.0             | 4.1              | 0.56    | 0.55          |
+| **CodeLLama 34B**     | 2.5             | 10.0             | 0.57    | 0.52          |
 | **CodeLLama 7B**      | 0.0             | 0.0              | 0.41    | 0.41          |
+
 
 
 
