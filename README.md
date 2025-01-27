@@ -108,5 +108,12 @@ We further investigated performance on advanced concepts:
 | **CodeLLama 7B**      | 0.0                 | 0.23        | 0.0                    | 0.28           |
 
 ### Citation
-Forthcoming
+'''
+@inproceedings{CoCoNUT,
+  title={CoCoNUT: Structural Code Understanding does not fall out of a tree},
+  author={Claas Beger, Saikat Dutta},
+  booktitle={Proceedings of the 2nd International Workshop on Large Language Models for Code},
+  year={2025}
+}
+'''
 
