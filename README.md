@@ -107,13 +107,14 @@ We further investigated performance on advanced concepts:
 | **CodeLLama 34B**     | 0.0                 | 0.24        | 0.0                    | 0.27           |
 | **CodeLLama 7B**      | 0.0                 | 0.23        | 0.0                    | 0.28           |
 
-### Citation
-'''
-@inproceedings{CoCoNUT,
-  title={CoCoNUT: Structural Code Understanding does not fall out of a tree},
-  author={Claas Beger, Saikat Dutta},
-  booktitle={Proceedings of the 2nd International Workshop on Large Language Models for Code},
+# Citation
+
+```bibtex
+@inproceedings{secvulllmstudy,
+  title={Understanding the Effectiveness of Large Language Models in Detecting Security Vulnerabilities},
+  author={Avishree Khare and Saikat Dutta and Ziyang Li and Alaia Solko-Breslin and Mayur Naik and Rajeev Alur},
+  booktitle={Proceedings of the 2025 IEEE Conference on Software Testing, Validation and Verification},
   year={2025}
 }
-'''
+```
 
