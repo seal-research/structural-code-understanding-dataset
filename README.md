@@ -7,11 +7,12 @@ In addition, we investigate the execution of advanced code concepts like OOP, Co
 ![Code Execution Tracing Task](Visualizations/NonTrivial.jpg)
 
 
-This repository contains the different scripts we have used for generating and eliciting traces from Java and Python programs.
+This repository contains the different scripts we have used for generating and eliciting traces from Java and Python programs. The trace dataset is also shared at [HuggingFace](https://huggingface.co/datasets/ClaasBeger/CoCoNUT).
 
 Under Dataset, we have saved the different short programs according to their respective functionality. In addition, this folder contains the majority of traces, as well as the code to produce them.  
 The Results directory contains the traces produced by the different models and split between HumanEval and complex (e.g advanced concepts).
 Models contains specific configuration files for different language models to run locally. Visualizations contains a number of basic visualizations of the different findings.
+
 
 A basic overview of the findings on HumanEval can be found below:
 
