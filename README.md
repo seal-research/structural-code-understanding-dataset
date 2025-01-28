@@ -107,6 +107,10 @@ We further investigated performance on advanced concepts:
 | **CodeLLama 34B**     | 0.0                 | 0.24        | 0.0                    | 0.27           |
 | **CodeLLama 7B**      | 0.0                 | 0.23        | 0.0                    | 0.28           |
 
+### Task Performance using bucketed trace lengths
+
+![Model Performance](Visualizations/Bucket_linePlot_direct_overlap.png "Model Performance using various bucketed trace lengths")
+
 # Citation
 
 ```bibtex
