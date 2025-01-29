@@ -115,11 +115,14 @@ We further investigated performance on advanced concepts:
 # Citation
 
 ```bibtex
-@inproceedings{CoCoNUT,
-  title={CoCoNUT: Structural Code Understanding does not fall out of a tree},
-  author={Claas Beger, Saikat Dutta},
-  booktitle={Proceedings of the 2nd International Workshop on Large Language Models for Code},
-  year={2025}
+@misc{beger2025coconutstructuralcodeunderstanding,
+      title={CoCoNUT: Structural Code Understanding does not fall out of a tree}, 
+      author={Claas Beger and Saikat Dutta},
+      year={2025},
+      eprint={2501.16456},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2501.16456}, 
 }
 ```
 
